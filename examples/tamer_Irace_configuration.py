@@ -4,11 +4,11 @@ import sys
 import os
 
 # make sure test can be run from anywhere
-path = os.getcwd().rsplit('up-ac', 2)[0]
+path = os.getcwd().rsplit('up-ac', 1)[0]
 path += 'up-ac'
 if not os.path.isfile(sys.path[0] + '/configurators.py') and \
         'up-ac' in sys.path[0]:
-    sys.path.insert(0, sys.path[0].rsplit('up-ac', 2)[0] + 'up-ac')
+    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac')
 
 from Irace_configurator import IraceConfigurator
 from Irace_interface import IraceInterface

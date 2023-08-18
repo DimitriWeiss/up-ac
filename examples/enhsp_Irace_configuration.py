@@ -4,11 +4,8 @@ import sys
 import os
 
 # make sure test can be run from anywhere
-print('path raw', os.getcwd())
 path = os.getcwd().rsplit('up-ac', 1)[0]
-print('path split', path)
 path += 'up-ac'
-print('path with up-ac')
 if not os.path.isfile(sys.path[0] + '/configurators.py') and \
         'up-ac' in sys.path[0]:
     sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac')
@@ -22,14 +19,13 @@ instances = [f'{path}/test_problems/depot/problem.pddl',
              f'{path}/test_problems/citycar/problem.pddl',
              f'{path}/test_problems/sailing/problem.pddl',
              f'{path}/test_problems/safe_road/problem.pddl']
-print('path still', path)
+
 # test setting
 engine = ['enhsp']
 
 metrics = ['quality', 'runtime']
 
 # initialize generic Algorithm Configuration interface
-print('path for reader', f'{path}/engine_pcs')
 igaci = IraceInterface()
 igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
 
