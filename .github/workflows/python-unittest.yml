@@ -15,7 +15,7 @@ jobs:
   build:
 
     runs-on: ${{ matrix.os }}
-    name: Test UPAC on ${{ matrix.os }} and Irace from ${{ r-package-source }}
+    name: Test UPAC on ${{ matrix.os }} and Irace from ${{ matrix.r-package-source }}
     env: 
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     strategy:
