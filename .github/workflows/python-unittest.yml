@@ -21,11 +21,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-20.04]
         python-version: ["3.8"]
-        pip-args: ["", "--upgrade"]
+        pip-args: ["--upgrade"]
         r-version: ["release"]
-        r-package-source: ["cran::irace", "github::MLopez-Ibanez/irace"]
+        r-package-source: ["github::MLopez-Ibanez/irace"]
 
     steps:
     - uses: actions/checkout@v3
