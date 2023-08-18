@@ -66,6 +66,10 @@ class GenericACInterface():
         if pcs_dir[-1] != '/':
             pcs_dir = pcs_dir + '/'
 
+        print('pcs_dir', pcs_dir)
+        import os
+        print('raw_path', os.getcwd())
+
         for engine in engines:
             with open(pcs_dir + engine + '.pcs', 'r') as f:
                 self.engine_param_spaces[engine] = pcs.read(f)
