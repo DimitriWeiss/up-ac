@@ -9,18 +9,63 @@ on:
       - dev
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    name: Test ${{ matrix.os }} (${{ matrix.python-version }}) (pip ${{ matrix.pip-args }}) (${{ matrix.r-version }}) (${{ matrix.r-package-source }})
+    env: 
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        python-version: ["3.8"]
+        pip-args: ["", "--upgrade"]
+        r-version: ["release"]
+        r-package-source: ["cran::irace", "github::MLopez-Ibanez/irace"]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.8"
+        python-version: ${{ matrix.python-version }}
+        cache: pip
+
+    - name: Set up R 
+      uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: ${{ matrix.r-version }}
+        use-public-rspm: true
+
+    - uses: r-lib/actions/setup-r-dependencies@v2
+      if: ${{ matrix.r-package-source == 'github::MLopez-Ibanez/irace' }}
+      with:
+        packages: remotes
+        pak-version: devel
+
+    - name: Install github::MLopez-Ibanez/irace
+      if: ${{ matrix.r-package-source == 'github::MLopez-Ibanez/irace' }}
+      run: |
+        remotes::install_github('MLopez-Ibanez/irace', upgrade = 'never', build = FALSE)
+      shell: Rscript {0}
+
+    - uses: r-lib/actions/setup-r-dependencies@v2
+      if: ${{ matrix.r-package-source == 'cran::irace' }}
+      with:
+        packages: ${{ matrix.r-package-source }}
+        dependencies: '"hard"'
+        pak-version: devel
+            
+    - name: Install iracepy
+      run: python3 -m pip install ${{ matrix.pip-args }} .
+      
+    - name: Install Python dependencies
+      run: python3 -m pip install -r tests/requirements.txt
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
