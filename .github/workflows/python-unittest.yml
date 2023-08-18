@@ -13,9 +13,8 @@ on:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
-    name: Test ${{ matrix.os }} (${{ matrix.python-version }}) (pip ${{ matrix.pip-args }}) (${{ matrix.r-version }}) (${{ matrix.r-package-source }})
+    name: Test UPAC Python ${{ matrix.os }} Irace from (pip ${{ matrix.pip-args }}) (${{ matrix.r-version }})
     env: 
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     strategy:
@@ -63,10 +62,10 @@ jobs:
     #- name: Install iracepy
     #  run: python3 -m pip install ${{ matrix.pip-args }} .
       
-    - name: Install Python dependencies
-      run: python3 -m pip install -r tests/requirements.txt
+    #- name: Install Python dependencies
+    #  run: python3 -m pip install -r tests/requirements.txt
 
-    - name: Install dependencies
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
