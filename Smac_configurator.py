@@ -14,7 +14,7 @@ class SmacConfigurator(Configurator):
     def __init__(self):
         """Initialize Smac configurator."""
         Configurator.__init__(self)
-        # Test
+        # Test Test
 
     def get_feedback_function(self, gaci, engine, metric, mode,
                               gray_box=False):
