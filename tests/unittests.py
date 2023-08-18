@@ -1,5 +1,5 @@
 import unittest
-
+import irace
 
 class TestStringMethods(unittest.TestCase):
 
