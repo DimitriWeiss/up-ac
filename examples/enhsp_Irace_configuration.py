@@ -5,13 +5,13 @@ import os
 
 # make sure test can be run from anywhere
 print('path raw', os.getcwd())
-path = os.getcwd().rsplit('up-ac', 2)[0]
+path = os.getcwd().rsplit('up-ac', 1)[0]
 print('path split', path)
 path += 'up-ac'
 print('path with up-ac')
 if not os.path.isfile(sys.path[0] + '/configurators.py') and \
         'up-ac' in sys.path[0]:
-    sys.path.insert(0, sys.path[0].rsplit('up-ac', 2)[0] + 'up-ac')
+    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac')
 
 from Irace_configurator import IraceConfigurator
 from Irace_interface import IraceInterface
