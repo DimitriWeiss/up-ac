@@ -6,7 +6,7 @@ import os
 
 def get_OAT():
     # Set path to up-ac
-    path = os.getcwd().rsplit('up-ac', 2)[0]
+    path = os.getcwd().rsplit('up-ac', 1)[0]
     path += 'up-ac'
 
     # Path to OAT directory
