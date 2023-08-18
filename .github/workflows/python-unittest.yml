@@ -60,8 +60,8 @@ jobs:
         dependencies: '"hard"'
         pak-version: devel
             
-    - name: Install iracepy
-      run: python3 -m pip install ${{ matrix.pip-args }} .
+    #- name: Install iracepy
+    #  run: python3 -m pip install ${{ matrix.pip-args }} .
       
     - name: Install Python dependencies
       run: python3 -m pip install -r tests/requirements.txt
