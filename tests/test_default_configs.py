@@ -51,21 +51,27 @@ class TestDefaultConfigs(unittest.TestCase):
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'evaluator': 'blind', 'pruning': 'null'})
 
+
     def test_lpg(self):
+        get_OAT()
         engine = ["lpg"]
         ogaci = OATInterface()
         ogaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'avoid_best_action_cycles': '0', 'bestfirst': '1', 'choose_min_numA_fact': '1'})
+        delete_OAT()
 
     def test_pyperplan(self):
+        get_OAT()
         engine = ["pyperplan"]
         ogaci = OATInterface()
         ogaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'search':'astar'})
+        delete_OAT()
+
 
 if __name__ == '__main__':
     unittest.main()
