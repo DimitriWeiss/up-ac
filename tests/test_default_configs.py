@@ -17,6 +17,10 @@ if not os.path.isfile(sys.path[0] + '/configurators.py') and \
     
 from Irace_interface import IraceInterface
 from Irace_configurator import IraceConfigurator
+
+with open(f"{path}/utils/download_OAT.py") as f:
+    exec(f.read())
+
 from OAT_configurator import OATConfigurator
 from OAT_interface import OATInterface
 
