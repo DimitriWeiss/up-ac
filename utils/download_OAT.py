@@ -47,4 +47,4 @@ def delete_OAT():
     path = os.getcwd().rsplit('up-ac', 1)[0]
     path += 'up-ac'
     if os.path.isdir(f'{path}/OAT/'):
-        os.remove(f'{path}/OAT/OAT.zip')
+        os.rmdir(f'{path}/OAT/')
