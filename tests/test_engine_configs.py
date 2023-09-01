@@ -23,7 +23,7 @@ from Smac_configurator import SmacConfigurator
 from Smac_interface import SmacInterface
 
 
-class TestTamerDefaults(unittest.TestCase):
+class TestEngines(unittest.TestCase):
 # test setting
     def test_tamerIrace(self):
         engine = ['tamer']
