@@ -74,6 +74,7 @@ class TestDefaultConfigs(unittest.TestCase):
         up.shortcuts.get_environment().credits_stream = None
         default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'search':'astar'})
+        print(os.listdir(f"{path}/OAT/"))
         delete_OAT()
 
 
