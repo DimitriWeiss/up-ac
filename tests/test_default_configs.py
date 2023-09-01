@@ -57,25 +57,25 @@ class TestDefaultConfigs(unittest.TestCase):
 
 
     def test_lpg(self):
-        get_OAT()
+        #get_OAT()
         engine = ["lpg"]
-        ogaci = OATInterface()
-        ogaci.read_engine_pcs(engine, f'{path}/engine_pcs')
+        igaci = IraceInterface()
+        igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
-        default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
+        default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'avoid_best_action_cycles': '0', 'bestfirst': '1', 'choose_min_numA_fact': '1'})
-        delete_OAT()
+        #delete_OAT()
 
     def test_pyperplan(self):
-        get_OAT()
+        #get_OAT()
         engine = ["pyperplan"]
-        ogaci = OATInterface()
-        ogaci.read_engine_pcs(engine, f'{path}/engine_pcs')
+        igaci = IraceInterface()
+        igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
-        default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
+        default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'search':'astar'})
-        print(os.listdir(f"{path}/OAT/"))
-        delete_OAT()
+        #print(os.listdir(f"{path}/OAT/"))
+        #delete_OAT()
 
 
 if __name__ == '__main__':
