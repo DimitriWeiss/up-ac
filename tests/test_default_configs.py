@@ -17,9 +17,6 @@ if not os.path.isfile(sys.path[0] + '/configurators.py') and \
 from Irace_interface import IraceInterface
 from Irace_configurator import IraceConfigurator
 
-with open(f"{path}/utils/download_OAT.py") as f:
-    exec(f.read())
-
 class TestDefaultConfigs(unittest.TestCase):
 
     def test_tamerConfig(self):

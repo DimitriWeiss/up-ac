@@ -43,6 +43,7 @@ class TestEngines(unittest.TestCase):
         default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5})
         delete_OAT()
+        
     def test_tamerSmac(self):
         engine = ['tamer']
         Sgaci = SmacInterface()
