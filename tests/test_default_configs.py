@@ -2,7 +2,6 @@
 from unified_planning.io import PDDLReader
 import unified_planning as up
 import multiprocessing as mp
-import time
 import sys
 import os
 import unittest
@@ -21,20 +20,12 @@ from Irace_configurator import IraceConfigurator
 with open(f"{path}/utils/download_OAT.py") as f:
     exec(f.read())
 
-from OAT_configurator import OATConfigurator
-from OAT_interface import OATInterface
-
-
 class TestDefaultConfigs(unittest.TestCase):
-# test setting
 
     def test_tamerConfig(self):
         engine = ['tamer']
-
-        # initialize generic Algorithm Configuration interface
         igaci = IraceInterface()
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
-
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5})
@@ -55,28 +46,21 @@ class TestDefaultConfigs(unittest.TestCase):
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'evaluator': 'blind', 'pruning': 'null'})
 
-
     def test_lpg(self):
-        #get_OAT()
         engine = ["lpg"]
         igaci = IraceInterface()
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'avoid_best_action_cycles': '0', 'bestfirst': '1', 'choose_min_numA_fact': '1'})
-        #delete_OAT()
 
     def test_pyperplan(self):
-        #get_OAT()
         engine = ["pyperplan"]
         igaci = IraceInterface()
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'search':'astar'})
-        #print(os.listdir(f"{path}/OAT/"))
-        #delete_OAT()
-
 
 if __name__ == '__main__':
     unittest.main()

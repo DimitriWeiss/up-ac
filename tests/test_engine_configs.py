@@ -2,7 +2,6 @@
 from unified_planning.io import PDDLReader
 import unified_planning as up
 import multiprocessing as mp
-import time
 import sys
 import os
 import unittest
@@ -22,35 +21,32 @@ from OAT_interface import OATInterface
 from Smac_configurator import SmacConfigurator
 from Smac_interface import SmacInterface
 
+with open(f"{path}/utils/download_OAT.py") as f:
+    exec(f.read())
 
 class TestEngines(unittest.TestCase):
 # test setting
     def test_tamerIrace(self):
         engine = ['tamer']
-
         igaci = IraceInterface()
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
-
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5})
 
     def test_tamerOAT(self):
         engine = ['tamer']
-
+        get_OAT()
         ogaci = OATInterface()
         ogaci.read_engine_pcs(engine, f'{path}/engine_pcs')
-
         up.shortcuts.get_environment().credits_stream = None
         default_config = ogaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5})
-
+        delete_OAT()
     def test_tamerSmac(self):
         engine = ['tamer']
-
         Sgaci = SmacInterface()
         Sgaci.read_engine_pcs(engine, f'{path}/engine_pcs')
-
         up.shortcuts.get_environment().credits_stream = None
         default_config = Sgaci.engine_param_spaces[engine[0]].get_default_configuration()
         self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5})
