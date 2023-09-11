@@ -70,3 +70,4 @@ jobs:
       run: |
         python -m unittest tests/unittests.py
         python -m unittest tests/test_default_engine_configs.py
+        python -m unittest tests/test_allowed_combinations.py
