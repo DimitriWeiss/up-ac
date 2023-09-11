@@ -25,7 +25,7 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5})
+        self.assertEqual(dict(default_config), {'heuristic':'hadd','weight':0.5},f"Default configuration of {engine[0]} does not match specified default configuration")
 
     def test_enhsp(self):
         engine = ["enhsp"]
@@ -33,7 +33,7 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'heuristic':'hadd','search_algorithm':'gbfs'})
+        self.assertEqual(dict(default_config), {'heuristic':'hadd','search_algorithm':'gbfs'},f"Default configuration of {engine[0]} does not match specified default configuration")
 
     def test_fast_downward(self):
         engine = ["fast-downward"]
@@ -41,7 +41,7 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'evaluator': 'blind', 'pruning': 'null'})
+        self.assertEqual(dict(default_config), {'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'evaluator': 'blind', 'pruning': 'null'},f"Default configuration of {engine[0]} does not match specified default configuration")
 
     def test_lpg(self):
         engine = ["lpg"]
@@ -49,7 +49,7 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'avoid_best_action_cycles': '0', 'bestfirst': '1', 'choose_min_numA_fact': '1'})
+        self.assertEqual(dict(default_config), {'avoid_best_action_cycles': '0', 'bestfirst': '1', 'choose_min_numA_fact': '1'},f"Default configuration of {engine[0]} does not match specified default configuration")
 
     def test_pyperplan(self):
         engine = ["pyperplan"]
@@ -57,7 +57,7 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'search':'astar'})
+        self.assertEqual(dict(default_config), {'search':'astar'},f"Default configuration of {engine[0]} does not match specified default configuration")
 
 if __name__ == '__main__':
     unittest.main()
