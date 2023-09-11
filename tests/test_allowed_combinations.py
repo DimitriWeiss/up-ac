@@ -3,6 +3,8 @@ import unified_planning as up
 import sys
 import os
 import unittest
+from contextlib import redirect_stdout
+import io
 
 # make sure test can be run from anywhere
 path = os.getcwd().rsplit('up-ac', 1)[0]
@@ -41,8 +43,10 @@ class TestDefaultConfigs(unittest.TestCase):
                     sgaci = SmacInterface()
                     sgaci.read_engine_pcs(engine, f'{path}/engine_pcs')
                     SAC = SmacConfigurator()
-                    SAC_fb_func = SAC.get_feedback_function(sgaci, engine[0],
-                                                            metric, planner)
+                    trap = io.StringIO()
+                    with redirect_stdout(trap): 
+                        SAC_fb_func = SAC.get_feedback_function(sgaci, engine[0],
+                                                                metric, planner)
                     self.assertFalse(SAC_fb_func == None, msg = f"There is no feedback function for the combination of metric:'{metric}', planner:'{planner}' and engine:'{engine[0]}' when there should be")
 
 
@@ -56,8 +60,10 @@ class TestDefaultConfigs(unittest.TestCase):
                     sgaci = SmacInterface()
                     sgaci.read_engine_pcs(engine, f'{path}/engine_pcs')
                     SAC = SmacConfigurator()
-                    SAC_fb_func = SAC.get_feedback_function(sgaci, engine[0],
-                                                            metric, planner)
+                    trap = io.StringIO()
+                    with redirect_stdout(trap): 
+                        SAC_fb_func = SAC.get_feedback_function(sgaci, engine[0],
+                                                                metric, planner)
                     self.assertTrue(SAC_fb_func == None, msg = f"There is a feedback function for the combination of metric:'{metric}', planner:'{planner}' and engine:'{engine[0]}' when there should not be")
                        
 if __name__ == '__main__':
