@@ -23,7 +23,7 @@ class SmacConfigurator(Configurator):
         """
         Generate the function to run engine and get feedback.
 
-        paremer gaci: AC interface object.
+        parameter gaci: AC interface object.
         parameter engine: str, engine name.
         parameter metric: str, 'runtime' or 'quality'
         parameter mode: str, type of planning.
@@ -171,7 +171,7 @@ class SmacConfigurator(Configurator):
 
     def optimize(self, ac_tool, feedback_function=None, gray_box=False):
         """
-        Run the algrithm configuration.
+        Run the algorithm configuration.
 
         parameter ac_tool: str, which AC tool.
         parameter feedback_function: function to run engine and get feedback.

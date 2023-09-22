@@ -140,10 +140,10 @@ class OATInterface(GenericACInterface):
         We naively only use the first value.
 
         Note: Although this is suboptimal, invalid configurations will
-        lead to crah or bad results such that OAT will rate them
+        lead to crash or bad results such that OAT will rate them
         as subpar.
 
-        parametr param_space: ConfigSpace object.
+        parameter param_space: ConfigSpace object.
         '''
 
         param_file = '<?xml version="1.0" encoding="utf-8" ?>\n'

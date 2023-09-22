@@ -99,7 +99,7 @@ class GenericACInterface():
                           plantype, problem, gray_box_listener=None):
         """Execute configurated engine run.
 
-        paremer config: configuration of engine.
+        parameter config: configuration of engine.
         parameter metric: str, 'runtime' or 'quality'
         parameter engine: str, engine name.
         parameter plantype: str, type of planning.
