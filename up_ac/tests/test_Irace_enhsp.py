@@ -12,11 +12,11 @@ if not os.path.isfile(sys.path[0] + '/configurators.py') and \
         'up-ac' in sys.path[0]:
     sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac')
 
-from Irace_configurator import IraceConfigurator
-from Irace_interface import IraceInterface
+from up_ac.Irace_configurator import IraceConfigurator
+from up_ac.Irace_interface import IraceInterface
 
 
-class Test_Irace_Enhsp_Quality(unittest.TestCase):
+class TestIraceEnhspOnQuality(unittest.TestCase):
     # pddl instance to test with
     instances = [f'{path}/test_problems/depot/problem.pddl',
                  f'{path}/test_problems/counters/problem.pddl',
@@ -68,7 +68,7 @@ class Test_Irace_Enhsp_Quality(unittest.TestCase):
                                               IAC.incumbent, igaci), "Should have evaluated")
 
 
-class Test_Irace_Enhsp_Runtime(unittest.TestCase):
+class TestIraceEnhspOnRuntime(unittest.TestCase):
     # pddl instance to test with
     instances = [f'{path}/test_problems/depot/problem.pddl',
                  f'{path}/test_problems/counters/problem.pddl',
