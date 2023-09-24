@@ -7,10 +7,10 @@ import unittest
 
 # make sure test can be run from anywhere
 path = os.getcwd().rsplit('up-ac', 1)[0]
-path += 'up-ac'
+path += 'up-ac/up_ac'
 if not os.path.isfile(sys.path[0] + '/configurators.py') and \
         'up-ac' in sys.path[0]:
-    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac')
+    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
 
 from up_ac.Irace_configurator import IraceConfigurator
 from up_ac.Irace_interface import IraceInterface
