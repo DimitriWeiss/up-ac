@@ -29,12 +29,16 @@ class GenericACInterface():
         return factory.engines
 
     def compute_instance_features(self, domain, instance):
-        """Compute some instance features of a iven pddl instance.
+        """
+        Compute instance features of a given PDDL instance.
 
-        parameter domain: pddl, problem domain.
-        parameter instance: pddl, problem instance.
+        Parameters:
+            domain (str): PDDL string representing the problem domain.
+            instance (str): PDDL string representing the problem instance.
 
-        return features: list, computed instance features
+        Returns:
+            list: Computed instance features.
+
         """
         try:
             # TODO catch duplicte errors in tarski
@@ -58,10 +62,13 @@ class GenericACInterface():
         return features
 
     def read_engine_pcs(self, engines, pcs_dir):
-        """Read in pcs file for engine.
+        """
+        Read parameter configuration space (PCS) files for specified engines.
 
-        parameter engines: list of str, names of engines.
-        parameter pcs_dir: str, path to directory with pcs files.
+        Parameters:
+            engines (list of str): Names of the engines.
+            pcs_dir (str): Path to the directory containing the PCS files.
+
         """
         if pcs_dir[-1] != '/':
             pcs_dir = pcs_dir + '/'
@@ -82,11 +89,20 @@ class GenericACInterface():
                             '-' + line.split(' ')[0]] = 'FLAG'
 
     def get_feedback(self, engine, fbtype, result):
-        """Get feedback from planning engine after run.
+        """
+        Get feedback from a planning engine after a run.
 
-        parameter engine: str, name of planning engine.
-        parameter fbtype: str, type of feedback
-        parameter result: object, planning result.
+        Parameters:
+            engine (str): Name of the planning engine.
+            fbtype (str): Type of feedback: 'quality' or 'runtime'.
+            result (object): Planning result.
+
+        Returns:
+            object: Feedback based on the specified feedback type.
+
+        Raises:
+            ValueError: If an unsupported feedback type is provided.
+
         """
         if fbtype == 'quality':
             feedback = qaul_feedback(engine, result)
@@ -97,16 +113,23 @@ class GenericACInterface():
 
     def run_engine_config(self, config, metric, engine,
                           plantype, problem, gray_box_listener=None):
-        """Execute configurated engine run.
+        """
+        Execute a configured engine run.
 
-        parameter config: configuration of engine.
-        parameter metric: str, 'runtime' or 'quality'
-        parameter engine: str, engine name.
-        parameter plantype: str, type of planning.
-        parameter problem: str, path to problem instance
-        parameter gray_box_listener: True, if gra box to use
+        Parameters:
+            config (dict): Configuration of the engine.
+            metric (str): Metric for the evaluation: 'runtime' or 'quality'.
+            engine (str): Name of the engine.
+            plantype (str): Type of planning: 'OneshotPlanner' or 'AnytimePlanner'.
+            problem (str): Path to the problem instance.
+            gray_box_listener (bool, optional): True if using a gray box approach.
 
-        return feedback: result from configurated engine run.
+        Returns:
+            object: Result from the configured engine run.
+
+        Raises:
+            ValueError: If an unsupported planning type is provided.
+
         """
         if plantype == 'OneshotPlanner':
             config = self.transform_conf_from_ac(engine, config)

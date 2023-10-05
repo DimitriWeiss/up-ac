@@ -28,15 +28,21 @@ class SmacConfigurator(Configurator):
     def get_feedback_function(self, gaci, engine, metric, mode,
                               gray_box=False):
         """
-        Generate the function to run engine and get feedback.
+        Generate a function to run the planning engine and obtain feedback.
 
-        parameter gaci: AC interface object.
-        parameter engine: str, engine name.
-        parameter metric: str, 'runtime' or 'quality'
-        parameter mode: str, type of planning.
-        parameter gray_box: True, if gra box to use
+        Parameters:
+            gaci (ACInterface): Algorithm Configuration Interface object.
+            engine (str): Name of the planning engine.
+            metric (str): Metric to optimize, either 'runtime' or 'quality'.
+            mode (str): Type of planning.
+            gray_box (bool, optional): True if using a gray box, False otherwise.
 
-        return planner_feedback: function, planner feedback function.
+        Returns:
+            function: A planner feedback function that takes configuration, instance, seed, and reader.
+
+        Raises:
+            ValueError: If the provided engine is not supported for the given metric and mode.
+
         """
         if engine in self.capabilities[metric][mode]:
             self.metric = metric
@@ -141,21 +147,26 @@ class SmacConfigurator(Configurator):
                      n_workers=1, instances=[], instance_features=None,
                      metric='runtime'):
         """
-        Set up algorithm configuration scenario.
+        Set up the algorithm configuration scenario for SMAC (Sequential Model-based Algorithm Configuration).
 
-        parameter engine: str, which engine.
-        parameter param_space: ConfigSpace object.
-        parameter gaci: AC interface object.
-        parameter configuration_time: int, overall configuration time budget.
-        parameter n_trials: int, max number of engine evaluations.
-        parameter min_budget: int, min number of instances to use.
-        parameter max_budget: int, max number of instances to use.
-        parameter crash_cost: int, which cost to use if engine fails.
-        parameter planner_timelimit: int, max runtime per evaluation.
-        parameter n_workers: int, no. of cores to utilize.
-        parameter instances: list, problem instance paths.
-        parameter instance_features: dict, inst names and lists of features.
-        parameter metric: str, optimization metric.
+        Parameters:
+            engine (str): The name of the planning engine.
+            param_space (ConfigSpace.ConfigurationSpace): ConfigSpace object defining the parameter space.
+            gaci (ACInterface): AC interface object.
+            configuration_time (int, optional): Overall configuration time budget in seconds (default is 120).
+            n_trials (int, optional): Maximum number of engine evaluations (default is 400).
+            min_budget (int, optional): Minimum number of instances to use (default is 1).
+            max_budget (int, optional): Maximum number of instances to use (default is 3).
+            crash_cost (int, optional): The cost to use if the engine fails (default is 0).
+            planner_timelimit (int, optional): Maximum runtime per evaluation for the planner (default is 30).
+            n_workers (int, optional): Number of cores to utilize (default is 1).
+            instances (list, optional): List of problem instance paths (default is empty list, uses train_set).
+            instance_features (dict, optional): Dictionary containing instance names and lists of features (default is None).
+            metric (str, optional): The optimization metric, either 'runtime' or 'quality' (default is 'runtime').
+
+        Raises:
+            ValueError: If an unsupported metric is provided.
+
         """
         if not instances:
             instances = self.train_set
@@ -186,10 +197,15 @@ class SmacConfigurator(Configurator):
 
     def optimize(self, feedback_function=None, gray_box=False):
         """
-        Run the algorithm configuration.
+        Run the algorithm configuration optimization.
 
-        parameter feedback_function: function to run engine and get feedback.
-        parameter gray_box: True, if gray box usage.
+        Parameters:
+            feedback_function (function, optional): A function to run the engine and obtain feedback.
+            gray_box (bool, optional): True if gray box usage is enabled, False otherwise.
+
+        Returns:
+            tuple or None: A tuple containing the best configuration found and additional information (if available).
+                        Returns None if feedback_function is not provided.
         """
         if feedback_function is not None:
             # Import feedback function, since dask cannot pickle local objects            

@@ -11,13 +11,21 @@ class SmacInterface(GenericACInterface):
         GenericACInterface.__init__(self)
 
     def transform_conf_from_ac(self, engine, configuration):
-        """Transform configuration to up engine format.
-
-        parameter engines: list of str, names of engines.
-        parameter configuration: dict, parameter names with values.
-
-        return config: dict, configuration.
         """
+        Transform a configuration to the format expected by the planning engines.
+
+        Parameters:
+            engine (str): Name of the planning engine.
+            configuration (dict): The configuration with parameter names and values.
+
+        Returns:
+            dict: The transformed configuration in the engine's expected format.
+
+        Raises:
+            ValueError: If the provided engine list is empty or contains non-string elements.
+
+        """
+
         config = transform_pcs(engine, configuration)
         if engine == 'lpg':
             del_list = []

@@ -26,12 +26,25 @@ class IraceInterface(GenericACInterface):
         GenericACInterface.__init__(self)
 
     def transform_conf_from_ac(self, engine, configuration):
-        """Transform configuration to up engine format.
+        """
+        Transform configuration from algorithm configuration format to engine format.
 
-        parameter engines: list of str, names of engines.
-        parameter configuration: dict, parameter names with values.
+        This function takes a configuration in the algorithm configuration format, specific to the provided engine,
+        and transforms it into the corresponding format for the given engine.
 
-        return config: dict, configuration.
+        Args:
+            engine (str): Name of the engine for which the configuration is being transformed.
+            configuration (dict): A dictionary containing parameter names with their values.
+
+        Returns:
+            dict: A dictionary containing the transformed configuration for the specified engine.
+
+        Raises:
+            ValueError: If the specified engine is not supported.
+
+        Note:
+            The transformation process varies based on the engine type and specific configurations.
+
         """
         config = transform_pcs(engine, configuration)
         if engine == 'lpg':
@@ -132,23 +145,31 @@ class IraceInterface(GenericACInterface):
 
     def get_ps_irace(self, param_space):
         """
-        Get parameter space for irace.
+        Retrieve parameter space information for configuring irace.
 
-        parameter param_space: ConfigSpace object.
+        Parameters:
+            param_space (ConfigSpace.ConfigurationSpace): The ConfigSpace object defining the parameter space.
 
-        return default_conf: dict, default values for parameters.
-        return forbiddens: str, forbidden parameter value combinations.
+        Returns:
+            tuple: A tuple containing:
+                - dict: Default values for parameters.
+                - bool: Indicates if there are forbidden parameter value combinations.
+
         """
+
 
         def set_conditional(c, parent, cond_params):
             """
             Set conditions as strings for irace parameter space.
 
-            parameter c: ConfigSpace.conditions, condition.
-            parameter parent: ConfigSpace Parameter.
-            parameter cond_params: dict, has conditions as strings.
+            Parameters:
+                c (ConfigSpace.conditions): The condition to be set.
+                parent (ConfigSpace.Parameter): The parent parameter for the condition.
+                cond_params (dict): A dictionary to store conditions as strings.
 
-            return cond_params: dict, has conditions as strings.
+            Returns:
+                dict: A dictionary with conditions as strings.
+
             """
             if isinstance(c, InCondition):
                 if isinstance(parent, CategoricalHyperparameter):

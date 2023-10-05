@@ -20,15 +20,21 @@ class IraceConfigurator(Configurator):
     def get_feedback_function(self, gaci, engine, metric, mode,
                               gray_box=False):
         """
-        Generate the function to run engine and get feedback.
+        Generate a function to run the planning engine and obtain feedback.
 
-        parameter gaci: AC interface object.
-        parameter engine: str, engine name.
-        parameter metric: str, 'runtime' or 'quality'
-        parameter mode: str, type of planning.
-        parameter gray_box: True, if gra box to use
+        Parameters:
+            gaci (object): AC interface object.
+            engine (str): Name of the planning engine.
+            metric (str): Metric type, either 'runtime' or 'quality'.
+            mode (str): Type of planning mode.
+            gray_box (bool, optional): True if using a gray box approach.
 
-        return planner_feedback: function, planner feedback function.
+        Returns:
+            function: A function to provide feedback based on the specified parameters.
+
+        Raises:
+            ValueError: If the provided engine, metric, or mode is not supported.
+
         """
         if engine in self.capabilities[metric][mode]:
             self.metric = metric
@@ -124,21 +130,26 @@ class IraceConfigurator(Configurator):
                      planner_timelimit=30, n_workers=1, instances=[],
                      instance_features=None, metric='runtime'):
         """
-        Set up algorithm configuration scenario.
+        Set up the algorithm configuration scenario.
 
-        parameter engine: str, which engine.
-        parameter param_space: ConfigSpace object.
-        parameter gaci: AC interface object.
-        parameter configuration_time: int, overall configuration time budget.
-        parameter n_trials: int, max number of engine evaluations.
-        parameter min_budget: int, min number of instances to use.
-        parameter max_budget: int, max number of instances to use.
-        parameter crash_cost: int, which cost to use if engine fails.
-        parameter planner_timelimit: int, max runtime per evaluation.
-        parameter n_workers: int, no. of cores to utilize.
-        parameter instances: list, problem instance paths.
-        parameter instance_features: dict, inst names and lists of features.
-        parameter metric: str, optimization metric.
+        Parameters:
+            engine (str): Name of the engine.
+            param_space (ConfigSpace.ConfigurationSpace): The ConfigSpace object defining the parameter space.
+            gaci (object): AC interface object.
+            configuration_time (int, optional): Overall configuration time budget.
+            n_trials (int, optional): Maximum number of engine evaluations.
+            min_budget (int, optional): Minimum number of instances to use.
+            max_budget (int, optional): Maximum number of instances to use.
+            crash_cost (int, optional): The cost to use if the engine fails.
+            planner_timelimit (int, optional): Maximum runtime per evaluation.
+            n_workers (int, optional): Number of cores to utilize.
+            instances (list, optional): List of problem instance paths.
+            instance_features (dict, optional): Dictionary containing instance names and lists of features.
+            metric (str, optional): Optimization metric, either 'runtime' or 'quality'.
+
+        Raises:
+            ValueError: If the provided metric is not supported.
+
         """
         if not instances:
             instances = self.train_set
@@ -203,11 +214,19 @@ class IraceConfigurator(Configurator):
 
     def optimize(self, feedback_function=None, gray_box=False):
         """
-        Run the algorithm configuration.
+        Run the algorithm configuration process.
 
-        parameter feedback_function: function to run engine and get feedback.
-        parameter gray_box: True, if gray box usage.
+        Parameters:
+            feedback_function (function, optional): A function to run the engine and obtain feedback.
+            gray_box (bool, optional): True if using a gray box approach.
+
+        Returns:
+            tuple or None: A tuple containing:
+                - dict: The best configuration found.
+                - None: If there is no feedback function.
+
         """
+
         if feedback_function is not None:
 
             print('\nStarting Parameter optimization\n')

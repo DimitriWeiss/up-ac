@@ -45,15 +45,17 @@ class OATConfigurator(Configurator):
     def get_feedback_function(self, gaci, engine, metric, mode,
                               gray_box=False):
         """
-        Generate the function to run engine and get feedback.
+        Generate the function to run the engine and obtain feedback.
 
-        parameter gaci: AC interface object.
-        parameter engine: str, engine name.
-        parameter metric: str, 'runtime' or 'quality'
-        parameter mode: str, type of planning.
-        parameter gray_box: True, if gra box to use
+        Parameters:
+            gaci: AC interface object.
+            engine (str): Engine name.
+            metric (str): Optimization metric ('runtime' or 'quality').
+            mode (str): Type of planning.
+            gray_box (bool): True if gray box to use.
 
-        return planner_feedback: function, planner feedback function.
+        Returns:
+            function: Planner feedback function.
         """
         if engine in self.capabilities[metric][mode]:
             self.metric = metric
@@ -74,7 +76,17 @@ class OATConfigurator(Configurator):
                 gb_out = gb_out(q, res)
 
             def planner_feedback(config, instance, reader):
-            
+                """
+                Planner feedback function.
+
+                Parameters:
+                    config: Configuration for the planner.
+                    instance: Problem instance.
+                    reader: Reader object for parsing the problem.
+
+                Returns:
+                    float: Feedback value based on the planner's performance.
+                """ 
                 path = os.getcwd().rsplit('up-ac', 1)[0]
                 path += 'up-ac/up_ac'
                 sys.path.append(r"{}".format(path))
@@ -206,21 +218,22 @@ class OATConfigurator(Configurator):
         """
         Set up algorithm configuration scenario.
 
-        parameter engine: str, which engine.
-        parameter param_space: ConfigSpace object.
-        parameter gaci: AC interface object.
-        parameter configuration_time: int, overall configuration time budget.
-        parameter n_trials: int, max number of engine evaluations.
-        parameter min_budget: int, min number of instances to use.
-        parameter max_budget: int, max number of instances to use.
-        parameter crash_cost: int, which cost to use if engine fails.
-        parameter planner_timelimit: int, max runtime per evaluation.
-        parameter n_workers: int, no. of cores to utilize.
-        parameter instances: list, problem instance paths.
-        parameter instance_features: dict, inst names and lists of features.
-        parameter metric: str, optimization metric.
-        parameter popSize: int, population size of configs per generation (OAT).
-        parameter evlaLimit: int, max no. of evaluations (OAT).
+        Parameters:
+            engine (str): Engine name.
+            param_space: ConfigSpace object.
+            gaci: AC interface object.
+            configuration_time (int): Overall configuration time budget.
+            n_trials (int): Maximum number of engine evaluations.
+            min_budget (int): Minimum number of instances to use.
+            max_budget (int): Maximum number of instances to use.
+            crash_cost (int): Cost to use if engine fails.
+            planner_timelimit (int): Maximum runtime per evaluation.
+            n_workers (int): Number of cores to utilize.
+            instances (list): Problem instance paths.
+            instance_features: Dict of instance names and lists of features.
+            metric (str): Optimization metric.
+            popSize (int): Population size of configs per generation (OAT).
+            evlaLimit (int): Maximum number of evaluations (OAT).
         """
         if not instances:
             instances = self.train_set
@@ -270,8 +283,12 @@ class OATConfigurator(Configurator):
         """
         Run the algorithm configuration.
 
-        parameter feedback_function: function to run engine and get feedback.
-        parameter gray_box: True, if gray box usage.
+        Parameters:
+            feedback_function (function): Function to run the engine and get feedback.
+            gray_box (bool): True, if gray box usage.
+        
+        Returns:
+            tuple: Tuple containing the best configuration found and None.
         """
         if feedback_function is not None:
 
