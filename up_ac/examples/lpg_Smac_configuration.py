@@ -17,9 +17,7 @@ from up_ac.Smac_interface import SmacInterface
 # pddl instance to test with
 instances = [f'{path}/test_problems/visit_precedence/problem.pddl',
              f'{path}/test_problems/counters/problem.pddl',
-             f'{path}/test_problems/depot/problem.pddl',
-             f'{path}/test_problems/miconic/problem.pddl',
-             f'{path}/test_problems/matchcellar/problem.pddl']
+             f'{path}/test_problems/depot/problem.pddl']
 
 # test setting
 engine = ['lpg']
@@ -56,7 +54,7 @@ if __name__ == '__main__':
                          sgaci.engine_param_spaces[engine[0]],
                          sgaci, configuration_time=280, n_trials=280,
                          min_budget=2, max_budget=5, crash_cost=0,
-                         planner_timelimit=15, n_workers=1,
+                         planner_timelimit=15, n_workers=6,
                          instance_features=SAC.instance_features)
 
         SAC_fb_func = SAC.get_feedback_function(sgaci, engine[0],
@@ -70,7 +68,7 @@ if __name__ == '__main__':
         # Test feedback function
         default_config = \
             sgaci.engine_param_spaces[engine[0]].get_default_configuration()
-        SAC_fb_func(default_config, instances[3])
+        # SAC_fb_func(default_config, instances[3])
 
         # run algorithm configuration
         incumbent, _ = SAC.optimize(feedback_function=SAC_fb_func)

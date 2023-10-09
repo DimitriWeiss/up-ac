@@ -13,10 +13,7 @@ from up_ac.OAT_configurator import OATConfigurator
 from up_ac.OAT_interface import OATInterface
 
 # pddl instance to test with
-instances = [f'{path}/test_problems/depot/problem.pddl',
-             f'{path}/test_problems/citycar/problem.pddl',
-             f'{path}/test_problems/sailing/problem.pddl',
-             f'{path}/test_problems/visit_precedence/problem.pddl']
+instances = [f'{path}/test_problems/depot/problem.pddl']
 
 print(instances)
 

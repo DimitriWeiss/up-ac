@@ -1,6 +1,6 @@
 """Functionalities for managing and calling configurators."""
 from irace import irace
-from unified_planning.exceptions import UPProblemDefinitionError
+from unified_planning.exceptions import UPProblemDefinitionError, UPException
 from pebble import concurrent
 from concurrent.futures import TimeoutError
 
@@ -80,8 +80,9 @@ class IraceConfigurator(Configurator):
                             feedback = self.crash_cost
 
                 except (AssertionError, NotImplementedError,
-                        UPProblemDefinitionError):
-                    print('\n** Error in planning engine!')
+                        UPProblemDefinitionError, UPException,
+                        UnicodeDecodeError) as err:
+                    print('\n** Error in planning engine!', err)
                     if metric == 'runtime':
                         feedback = self.planner_timelimit
                     elif metric == 'quality':

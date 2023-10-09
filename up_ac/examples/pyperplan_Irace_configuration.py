@@ -14,10 +14,7 @@ from up_ac.Irace_configurator import IraceConfigurator
 from up_ac.Irace_interface import IraceInterface
 
 # pddl instance to test with
-instances = [f'{path}/test_problems/depot/problem.pddl',
-             f'{path}/test_problems/citycar/problem.pddl',
-             f'{path}/test_problems/sailing/problem.pddl',
-             f'{path}/test_problems/visit_precedence/problem.pddl']
+instances = [f'{path}/test_problems/depot/problem.pddl']
 
 # test setting
 engine = ['pyperplan']

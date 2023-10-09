@@ -40,15 +40,9 @@ for instance in instances:
 
 up.shortcuts.get_environment().credits_stream = None
 
-import random
-
-
-def test_func(configuration, instance, seed=0):
-    return random.randint(1, 10)
-
 
 if __name__ == '__main__':
-    # mp.freeze_support()
+    mp.freeze_support()
 
     # Try optimizing for quality and runtime separately
     for metric in metrics:

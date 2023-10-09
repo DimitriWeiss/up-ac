@@ -18,8 +18,7 @@ from up_ac.Smac_interface import SmacInterface
 instances = [f'{path}/test_problems/depot/problem.pddl',
              f'{path}/test_problems/counters/problem.pddl',
              f'{path}/test_problems/matchcellar/problem.pddl',
-             f'{path}/test_problems/sailing/problem.pddl',
-             f'{path}/test_problems/visit_precedence/problem.pddl']
+             f'{path}/test_problems/sailing/problem.pddl']
 
 # test setting
 engine = ['tamer']
@@ -70,7 +69,7 @@ if __name__ == '__main__':
         # Test feedback function
         default_config = \
             sgaci.engine_param_spaces[engine[0]].get_default_configuration()
-        SAC_fb_func(default_config, instances[0])
+        # SAC_fb_func(default_config, instances[0])
 
         # run algorithm configuration
         incumbent, _ = SAC.optimize(feedback_function=SAC_fb_func)

@@ -57,36 +57,36 @@ adaptfirst {0, 1} [0] # FLAG
 comp_mutex {0, 1} [0] # FLAG
 cputime_localsearch [100.0, 5000.0] [1200.0]
 consider_relaxed_plan_for_inconsistences {0, 1} [0] # FLAG
-disable_split {0, 1} [0] # FLAG
-disable_numeric_compress {0, 1} [0] # FLAG
+# disable_split {0, 1} [0] # FLAG # temporal planning
+# disable_numeric_compress {0, 1} [0] # FLAG # numeric planning
 force_neighbour_insertion {0, 1} [0] # FLAG
 # heuristic [1, 100000000000] [1]i
 incremental_goal_resolution {0, 1} [0] # FLAG
-insert_time_limit_actions_after_last_applicable {0, 1} [0] # FLAG
-lowmemory {0, 1} [0] # FLAG
+# insert_time_limit_actions_after_last_applicable {0, 1} [0] # FLAG # temporal planning
+# lowmemory {0, 1} [0] # FLAG
 # l_rate+ [0.00001, 0.01] [0.001]
 # l_rate- [0.00000001, 0.00001] [0.0000005]
-neighb_without_timed_fa {0, 1} [0] # FLAG 
+# neighb_without_timed_fa {0, 1} [0] # FLAG # temporal planning
 ncut_neighb {0, 1} [0] # FLAG
-nobestfirst {0, 1} [0] # FLAG
+# nobestfirst {0, 1} [0] # FLAG # Already handled by bestfirst
 no_hcut_neighb {0, 1} [1] # FLAG
 no_lcut_neighb {0, 1} [1] # FLAG
 nomutex {0, 1} [1] # FLAG
-no_action_remotion_negative_numeric_effects {0, 1} [1] # FLAG
-no_negative_numeric_effects {0, 1} [1] # FLAG
-not_insert_time_limit_actions {0, 1} [1] # FLAG
-numeric_neighbors_in_down_levels {0, 1} [1] # FLAG
-numeric_threats {num, max, tot} [num] # FLAGS # {numeric_threats=num, numeric_threats=max, numeric_threats=tot}
+# no_action_remotion_negative_numeric_effects {0, 1} [1] # FLAG # numeric planning
+# no_negative_numeric_effects {0, 1} [1] # FLAG # numeric planning
+# not_insert_time_limit_actions {0, 1} [1] # FLAG # temporal planning
+# numeric_neighbors_in_down_levels {0, 1} [1] # FLAG # numeric planning
+# numeric_threats {num, max, tot} [num] # FLAGS # {numeric_threats=num, numeric_threats=max, numeric_threats=tot} # numeric planning
 npar_cut_neighb [5, 100] [20]i
-max_num_flips [-1, 1000] [-1]i
-onlybestfirst {0, 1} [0] # FLAG
+# max_num_flips [-1, 1000] [-1]i
+# onlybestfirst {0, 1} [0] # FLAG # Already handled by bestfirst
 onlysearchcostx1stsol {0, 1} [0] # FLAG
 penalization_coeff [1, 10] [2]i
 penalize_inconsistence [0, 10000000] [0]i
 searchcostx1stsol {0, 1} [0] # FLAG
 total_time_goal {0, 1} [0] # FLAG
 verifyincchoice {0, 1} [0] # FLAG
-verify_negative_numeric_effects {0, 1} [0] # FLAG
+# verify_negative_numeric_effects {0, 1} [0] # FLAG # numeric planning
 wcost [0.0, 1.0] [1.0]
 wtime [0.0, 1.0] [0.0]
 weight_input_plan_cost [0.0, 1.0] [0.0]
@@ -99,9 +99,9 @@ lm_incrme | lagrange in {1}
 lm_incrprec | lagrange in {1}
 lm_multilevel | lagrange in {1}
 numrestart | bestfirst in {0, 1}
-tabu_length | twalkplan in {0}
+# tabu_length | twalkplan in {0}
 
 # forbidden
 {numrestart=1,bestfirst=0}
 {searchcostx1stsol=1,onlysearchcostx1stsol=1}
-{no_negative_numeric_effects=1,verify_negative_numeric_effects=1}
+# {no_negative_numeric_effects=1,verify_negative_numeric_effects=1}

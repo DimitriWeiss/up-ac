@@ -15,10 +15,7 @@ from up_ac.Smac_configurator import SmacConfigurator
 from up_ac.Smac_interface import SmacInterface
 
 # pddl instance to test with
-instances = [f'{path}/test_problems/depot/problem.pddl',
-             f'{path}/test_problems/citycar/problem.pddl',
-             f'{path}/test_problems/sailing/problem.pddl',
-             f'{path}/test_problems/visit_precedence/problem.pddl']
+instances = [f'{path}/test_problems/depot/problem.pddl']
 
 # test setting
 engine = ['pyperplan']
@@ -69,7 +66,7 @@ if __name__ == '__main__':
         # Test feedback function
         default_config = \
             sgaci.engine_param_spaces[engine[0]].get_default_configuration()
-        SAC_fb_func(default_config, instances[0])
+        # SAC_fb_func(default_config, instances[0])
 
         # run algorithm configuration
         incumbent, _ = SAC.optimize(feedback_function=SAC_fb_func)

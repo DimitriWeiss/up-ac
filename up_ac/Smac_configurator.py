@@ -1,7 +1,7 @@
 """Functionalities for managing and calling configurators."""
 from smac import Scenario
 from smac import AlgorithmConfigurationFacade
-from unified_planning.exceptions import UPProblemDefinitionError
+from unified_planning.exceptions import UPProblemDefinitionError, UPException
 from pebble import concurrent
 import os
 import dill
@@ -57,12 +57,21 @@ class SmacConfigurator(Configurator):
 
                 # Since Smac handles time limits itself,
                 # we do not use concurrent, as with other AC tools
-                feedback = \
-                    gaci.run_engine_config(config,
-                                           metric,
-                                           engine,
-                                           mode,
-                                           pddl_problem)
+                try:
+                    feedback = \
+                        gaci.run_engine_config(config,
+                                               metric,
+                                               engine,
+                                               mode,
+                                               pddl_problem)
+                except (AssertionError, NotImplementedError,
+                        UPProblemDefinitionError, UPException,
+                        UnicodeDecodeError) as err:
+                    print('\n** Error in planning engine!', err)
+                    if metric == 'runtime':
+                        feedback = self.planner_timelimit
+                    elif metric == 'quality':
+                        feedback = self.crash_cost
                 '''
 
                 try:

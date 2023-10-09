@@ -22,6 +22,6 @@ setup(name='up_ac',
                               'engine_pcs/*']},
       include_package_data=True,
       install_requires=["unified-planning", "smac", "ConfigSpace",
-                        "tarski", "pebble"],
+                        "tarski", "pebble", "dill"],
       license='LICENSE.txt',
       )

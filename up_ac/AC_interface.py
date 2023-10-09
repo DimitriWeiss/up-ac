@@ -152,9 +152,13 @@ class GenericACInterface():
             else:
                 with OneshotPlanner(name=engine,
                                     params=config) as planner:
-                    result = planner.solve(problem)
+                    print(config)
+                    # result = planner.solve(problem)
+                    
                     try:
                         result = planner.solve(problem)
+                        print('RESULT', result)
+                        print(result.log_messages)
                         if (result.status ==
                                 up.engines.PlanGenerationResultStatus.
                                 SOLVED_SATISFICING):
