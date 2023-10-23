@@ -4,7 +4,7 @@ Use algorithm configuration on several planners within the unified planning fram
 
 # Installation
 
-At the moment an installation is nly possible via 
+At the moment an installation is only possible via 
 
 ```
 pip install git+https://github.com/DimitriWeiss/up-ac.git
@@ -20,7 +20,7 @@ pip install --pre unified-planning[<engine_name>]
 
 ## Planning engines integrated in the algorithm configuration
 
-The development of the unified planning framework is still ongoing. Hence, some of the integrated planning engines ae not yet available for automated algorithm configuration. Planning engines confirmed to work in this implementation are:
+The development of the unified planning framework is still ongoing. Hence, some of the integrated planning engines are not yet available for automated algorithm configuration. Planning engines confirmed to work in this implementation are:
 
 - lpg
 - fast-downward
@@ -45,7 +45,7 @@ The methods integrated are:
 
 ## SMAC3
 
-Smac is autotaically installed with the installation of up_ac. For further details refer to (https://automl.github.io/SMAC3/main/).
+Smac is automatically installed with the installation of up_ac. For further details refer to (https://automl.github.io/SMAC3/main/).
 
 ## Optano Algorithm Tuner (OAT)
 
@@ -56,7 +56,7 @@ up_ac.utils.download_OAT.get_OAT()
 up_ac.utils.download_OAT.copy_call_engine_OAT()
 ```
 
-The first function generates a directory for OAT, downloads compiled code for OAT and saves it in the up_ac directory. The second function moves code to the OAT directory. Once you have run these functions, you do not need t run them again, except you have removed the OAT directory.
+The first function generates a directory for OAT, downloads compiled code for OAT and saves it in the up_ac directory. The second function moves code to the OAT directory. Once you have run these functions, you do not need to run them again, except if you have removed the OAT directory.
 
 To remove the OAT directory run:
 
