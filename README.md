@@ -64,6 +64,8 @@ To remove the OAT directory run:
 up_ac.utils.download_OAT.delete_OAT()
 ```
 
+For further details on OAT refer to (https://docs.optano.com/algorithm.tuner/current/).
+
 ## Irace
 
 In order to use Irace you need to install R on your system. After that you need to install the R package for irace from the R console by:
@@ -73,6 +75,8 @@ install.packages("irace", repos = "https://cloud.r-project.org")
 ```
 
 The algorithm configuration implementation will then access irace via the python package rpy2.
+
+For further details on Irace refer to (https://github.com/cran/irace) and the python implementation of irace (https://github.com/auto-optimization/iracepy).
 
 ## Acknowledgments
 
