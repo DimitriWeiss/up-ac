@@ -31,6 +31,7 @@ class Configurator():
         self.metric = None
         self.crash_cost = 0
         self.ac = None
+        self.verbose = True
 
     def print_feedback(self, engine, instance, feedback):
         """
@@ -41,8 +42,9 @@ class Configurator():
             instance (str): Name of the instance.
             feedback: Feedback from the engine.
         """
-        print(f'** Feedback of {engine} on instance\n**' +
-              f' {instance}\n** is {feedback}\n\n')
+        if self.verbose:
+            print(f'** Feedback of {engine} on instance\n**' +
+                  f' {instance}\n** is {feedback}\n\n')
 
     def get_instance_features(self, instance_features=None):
         """
@@ -52,7 +54,8 @@ class Configurator():
             instance_features (dict): Instance names and their features in lists.
         """
         self.instance_features = instance_features
-        print('\nSetting instance features.\n')
+        if self.verbose:
+            print('\nSetting instance features.\n')
 
     def set_training_instance_set(self, train_set):
         """
@@ -62,7 +65,8 @@ class Configurator():
             train_set (list): List of instance paths.
         """
         self.train_set = train_set
-        print('\nSetting training instance set.\n')
+        if self.verbose:
+            print('\nSetting training instance set.\n')
 
     def set_test_instance_set(self, test_set):
         """
@@ -72,7 +76,8 @@ class Configurator():
             test_set (list): List of instance paths.
         """
         self.test_set = test_set
-        print('\nSetting testing instance set.\n')
+        if self.verbose:
+            print('\nSetting testing instance set.\n')
 
     def get_feedback_function(self, gaci, engine, metric, mode,
                               gray_box=False):
@@ -96,8 +101,9 @@ class Configurator():
 
             return planner_feedback
         else:
-            print(f'Algorithm Configuration for {metric} of {engine}' + \
-                  f' in {mode} is not supported.')
+            if self.verbose:
+                print(f'Algorithm Configuration for {metric} of {engine}' + \
+                      f' in {mode} is not supported.')
             return None
 
     def set_scenario(self, engine, param_space, gaci,
@@ -208,7 +214,8 @@ class Configurator():
 
                 except (AssertionError, NotImplementedError,
                         UPProblemDefinitionError):
-                    print('\n** Error in planning engine!')
+                    if self.verbose:
+                        print('\n** Error in planning engine!')
                     if metric == 'runtime':
                         f = planner_timelimit
                     elif metric == 'quality':
@@ -229,24 +236,31 @@ class Configurator():
                 else:
                     avg_f += self.crash_cost
                 if metric == 'runtime':
-                    print(f'\nFeedback on instance {inst}:\n\n', f, '\n')
+                    if self.verbose:
+                        print(f'\nFeedback on instance {inst}:\n\n', f, '\n')
                 elif metric == 'quality':
                     if f is not None:
-                        print(f'\nFeedback on instance {inst}:\n\n', -f, '\n')
+                        if self.verbose:
+                            print(f'\nFeedback on instance {inst}:\n\n', -f,
+                                  '\n')
                     else:
-                        print(f'\nFeedback on instance {inst}:\n\n', None,
-                              '\n')
+                        if self.verbose:
+                            print(f'\nFeedback on instance {inst}:\n\n', None,
+                                  '\n')
             if nr_inst != 0:
                 avg_f = avg_f / nr_inst
                 if metric == 'runtime':
-                    print(f'\nAverage performance on {nr_inst} instances:',
-                          avg_f, '\n')
+                    if self.verbose:
+                        print(f'\nAverage performance on {nr_inst} instances:',
+                              avg_f, '\n')
                 if metric == 'quality':
-                    print(f'\nAverage performance on {nr_inst} instances:',
-                          -avg_f, '\n')
+                    if self.verbose:
+                        print(f'\nAverage performance on {nr_inst} instances:',
+                              -avg_f, '\n')
                 return avg_f
             else:
-                print('\nPerformance could not be evaluated. No plans found.')
+                if self.verbose:
+                    print('\nPerformance could not be evaluated. No plans found.')
                 return None
         else:
             return None
@@ -265,7 +279,9 @@ class Configurator():
             config = gaci.transform_conf_from_ac(engine, config)
             with open(f'{path}/incumbent_{engine}.json', 'w') as f:
                 json.dump(config, f)
-            print('\nSaved best configuration in ' +
-                  f'{path}/incumbent_{engine}.json\n')
+            if self.verbose:
+                print('\nSaved best configuration in ' +
+                      f'{path}/incumbent_{engine}.json\n')
         else:
-            print(f'No configuration was saved. It was {config}')
+            if self.verbose:
+                print(f'No configuration was saved. It was {config}')

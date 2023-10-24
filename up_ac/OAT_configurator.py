@@ -128,7 +128,8 @@ class OATConfigurator(Configurator):
                         except:
                             output = None
                         if output is not None and len(output) not in (0, 1):
-                            print('gray box:', output)
+                            if self.verbose:
+                                print('gray box:', output)
                         if not res.empty():
                             thread.join()
 
@@ -166,7 +167,8 @@ class OATConfigurator(Configurator):
 
                     except (AssertionError, NotImplementedError,
                             UPProblemDefinitionError):
-                        print('\n** Error in planning engine!')
+                        if self.verbose:
+                            print('\n** Error in planning engine!')
                         if metric == 'runtime':
                             feedback = self.planner_timelimit
                         elif metric == 'quality':
@@ -208,8 +210,9 @@ class OATConfigurator(Configurator):
 
             return planner_feedback
         else:
-            print(f'Algorithm Configuration for {metric} of {engine} in' + \
-                  ' {mode} is not supported.')
+            if self.verbose:
+                print(f'Algorithm Configuration for {metric} of {engine} in' + \
+                      ' {mode} is not supported.')
             return None
 
     def set_scenario(self, engine, param_space, gaci,
@@ -296,7 +299,8 @@ class OATConfigurator(Configurator):
         """
         if feedback_function is not None:
 
-            print('\nStarting Parameter optimization\n')
+            if self.verbose:
+                print('\nStarting Parameter optimization\n')
 
             if self.scenario['metric'] == 'quality':
                 tunefor = ' --byValue '
@@ -335,12 +339,14 @@ class OATConfigurator(Configurator):
 
             while p.poll() is None:
                 line = p.stdout.readline()
-                print(line.decode('utf-8'))
+                if self.verbose:
+                    print(line.decode('utf-8'))
 
             self.incumbent = self.get_OAT_incumbent()
 
-            print('\nBest Configuration found is:\n',
-                  self.incumbent)
+            if self.verbose:
+                print('\nBest Configuration found is:\n',
+                      self.incumbent)
 
             return self.incumbent, None
         else:

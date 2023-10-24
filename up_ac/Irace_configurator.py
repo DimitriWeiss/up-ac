@@ -82,7 +82,8 @@ class IraceConfigurator(Configurator):
                 except (AssertionError, NotImplementedError,
                         UPProblemDefinitionError, UPException,
                         UnicodeDecodeError) as err:
-                    print('\n** Error in planning engine!', err)
+                    if self.verbose:
+                        print('\n** Error in planning engine!', err)
                     if metric == 'runtime':
                         feedback = self.planner_timelimit
                     elif metric == 'quality':
@@ -121,8 +122,9 @@ class IraceConfigurator(Configurator):
 
             return planner_feedback
         else:
-            print(f'Algorithm Configuration for {metric} of {engine} in' + 
-                  f' {mode} is not supported.')
+            if self.verbose:
+                print(f'Algorithm Configuration for {metric} of {engine} in' + 
+                      f' {mode} is not supported.')
             return None
 
     def set_scenario(self, engine, param_space, gaci,
@@ -209,7 +211,8 @@ class IraceConfigurator(Configurator):
 
         self.irace_param_space = gaci.irace_param_space
 
-        print('\nIrace scenario is set.\n')
+        if self.verbose:
+            print('\nIrace scenario is set.\n')
 
         self.scenario = scenario
 
@@ -230,7 +233,8 @@ class IraceConfigurator(Configurator):
 
         if feedback_function is not None:
 
-            print('\nStarting Parameter optimization\n')
+            if self.verbose:
+                print('\nStarting Parameter optimization\n')
             ac = irace(self.scenario,
                        self.irace_param_space,
                        feedback_function)
@@ -238,8 +242,9 @@ class IraceConfigurator(Configurator):
 
             self.incumbent = self.incumbent.to_dict(orient='records')[0]
 
-            print('\nBest Configuration found is:\n',
-                  self.incumbent)
+            if self.verbose:
+                print('\nBest Configuration found is:\n',
+                      self.incumbent)
 
             return self.incumbent, None
         else:

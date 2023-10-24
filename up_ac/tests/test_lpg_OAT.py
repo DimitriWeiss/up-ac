@@ -45,7 +45,7 @@ class TestOatLpgOnQuality(unittest.TestCase):
                      configuration_time=30, n_trials=30,
                      crash_cost=0, planner_timelimit=15, n_workers=3,
                      instance_features=None, popSize=5, metric=metric,
-                     evlaLimit=1)
+                     evalLimit=1)
 
     OAC_fb_func = OAC.get_feedback_function(ogaci, engine[0],
                                         metric, 'OneshotPlanner')
@@ -92,7 +92,7 @@ class TestOatLpgOnRuntime(unittest.TestCase):
                      configuration_time=30, n_trials=30,
                      crash_cost=0, planner_timelimit=15, n_workers=3,
                      instance_features=None, popSize=5, metric=metric,
-                     evlaLimit=1)
+                     evalLimit=1)
 
     OAC_fb_func = OAC.get_feedback_function(ogaci, engine[0],
                                         metric, 'OneshotPlanner')

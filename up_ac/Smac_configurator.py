@@ -67,7 +67,8 @@ class SmacConfigurator(Configurator):
                 except (AssertionError, NotImplementedError,
                         UPProblemDefinitionError, UPException,
                         UnicodeDecodeError) as err:
-                    print('\n** Error in planning engine!', err)
+                    if self.verbose:
+                        print('\n** Error in planning engine!', err)
                     if metric == 'runtime':
                         feedback = self.planner_timelimit
                     elif metric == 'quality':
@@ -148,8 +149,9 @@ class SmacConfigurator(Configurator):
 
             return planner_feedback
         else:
-            print(f'Algorithm Configuration for {metric} of {engine}' + \
-                  f' in {mode} is not supported.')
+            if self.verbose:
+                print(f'Algorithm Configuration for {metric} of {engine}' + \
+                      f' in {mode} is not supported.')
             return None
 
     def set_scenario(self, engine, param_space, gaci,
@@ -202,7 +204,8 @@ class SmacConfigurator(Configurator):
             instances=instances,  # List of training instances
             instance_features=instance_features  # Dict of instance features
         )
-        print('\nSMAC scenario is set.\n')
+        if self.verbose:
+            print('\nSMAC scenario is set.\n')
 
         self.scenario = scenario
 
@@ -227,7 +230,8 @@ class SmacConfigurator(Configurator):
             sys.path.append(r"{}".format(path))
             from load_smac_feedback import get_feedback
 
-            print('\nStarting Parameter optimization\n')
+            if self.verbose:
+                print('\nStarting Parameter optimization\n')
  
             ac = AlgorithmConfigurationFacade(
                 self.scenario,
@@ -238,8 +242,9 @@ class SmacConfigurator(Configurator):
 
             self.incumbent = self.incumbent.get_dictionary()
 
-            print('\nBest Configuration found is:\n',
-                  self.incumbent)
+            if self.verbose:
+                print('\nBest Configuration found is:\n',
+                      self.incumbent)
 
             return self.incumbent, None
         else:

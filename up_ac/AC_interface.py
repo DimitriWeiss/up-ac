@@ -21,6 +21,7 @@ class GenericACInterface():
         self.engine_param_spaces = {}
         self.engine_param_types = {}
         self.treader = treader(raise_on_error=True)
+        self.verbose = True
 
     def get_available_engines(self):
         """Get planning engines installed in up."""
@@ -142,32 +143,37 @@ class GenericACInterface():
                         if (result.status ==
                                 up.engines.PlanGenerationResultStatus.
                                 SOLVED_SATISFICING):
-                            print("Result found.\n")
+                            if self.verbose:
+                                print("Result found.\n")
                         else:
-                            print("No plan found.\n")
+                            if self.verbose:
+                                print("No plan found.\n")
                         feedback = self.get_feedback(engine, metric, result)
                     except:
-                        print("No plan found.\n")
+                        if self.verbose:
+                            print("No plan found.\n")
                         feedback = None
             else:
                 with OneshotPlanner(name=engine,
                                     params=config) as planner:
-                    print(config)
+                    if self.verbose:
+                        print(config)
                     # result = planner.solve(problem)
                     
                     try:
                         result = planner.solve(problem)
-                        print('RESULT', result)
-                        print(result.log_messages)
                         if (result.status ==
                                 up.engines.PlanGenerationResultStatus.
                                 SOLVED_SATISFICING):
-                            print("Result found.\n")
+                            if self.verbose:
+                                print("Result found.\n")
                         else:
-                            print("No plan found.\n")
+                            if self.verbose:
+                                print("No plan found.\n")
                         feedback = self.get_feedback(engine, metric, result)
                     except:
-                        print("No plan found.\n")
+                        if self.verbose:
+                            print("No plan found.\n")
                         feedback = None
 
         elif plantype == 'AnytimePlanner':
@@ -181,12 +187,15 @@ class GenericACInterface():
                         if (result.status ==
                                 up.engines.PlanGenerationResultStatus.
                                 SOLVED_SATISFICING):
-                            print("Result found.\n")
+                            if self.verbose:
+                                print("Result found.\n")
                         else:
-                            print("No plan found.\n")
+                            if self.verbose:
+                                print("No plan found.\n")
                         feedback = self.get_feedback(engine, metric, result)
                     except:
-                        print("No plan found.\n")
+                        if self.verbose:
+                            print("No plan found.\n")
                         feedback = None
             else:
                 with AnytimePlanner(name=engine,
@@ -196,12 +205,15 @@ class GenericACInterface():
                         if (result.status ==
                                 up.engines.PlanGenerationResultStatus.
                                 SOLVED_SATISFICING):
-                            print("Result found.\n")
+                            if self.verbose:
+                                print("Result found.\n")
                         else:
-                            print("No plan found.\n")
+                            if self.verbose:
+                                print("No plan found.\n")
                         feedback = self.get_feedback(engine, metric, result)
                     except:
-                        print("No plan found.\n")
+                        if self.verbose:
+                            print("No plan found.\n")
                         feedback = None
 
         return feedback
