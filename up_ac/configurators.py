@@ -204,7 +204,7 @@ class Configurator():
                         
                         try:
                             f = f.result()
-                        except TimeoutError:
+                        except (TimeoutError, AssertionError):
                             f = planner_timelimit
                     elif metric == 'quality':                    
                         f = \
@@ -250,16 +250,13 @@ class Configurator():
             if nr_inst != 0:
                 avg_f = avg_f / nr_inst
                 if metric == 'runtime':
-                    if self.verbose:
-                        print(f'\nAverage performance on {nr_inst} instances:',
-                              avg_f, '\n')
+                    print(f'\nAverage performance on {nr_inst} instances:',
+                          avg_f, '\n')
                 if metric == 'quality':
-                    if self.verbose:
-                        print(f'\nAverage performance on {nr_inst} instances:',
+                    print(f'\nAverage performance on {nr_inst} instances:',
                               -avg_f, '\n')
                 return avg_f
             else:
-                if self.verbose:
                     print('\nPerformance could not be evaluated. No plans found.')
                 return None
         else:
