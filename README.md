@@ -1,6 +1,6 @@
 # Algorithm Configuration for the AIPlan4EU Unified Planning
 
-Use algorithm configuration on several planners within the unified planning framework to enhance their performance.
+Use algorithm configuration on several planners within the unified planning framework to enhance their performance. Development is conducted by the Decision and Operation Technologies group from Bielefeld University (https://github.com/DOTBielefeld).
 
 # Installation
 

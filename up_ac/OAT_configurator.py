@@ -216,7 +216,7 @@ class OATConfigurator(Configurator):
                      configuration_time=120, n_trials=400, min_budget=1,
                      max_budget=3, crash_cost=0, planner_timelimit=30,
                      n_workers=1, instances=[], instance_features=None,
-                     metric='runtime', popSize=128, evlaLimit=2147483647):
+                     metric='runtime', popSize=128, evalLimit=2147483647):
         """
         Set up algorithm configuration scenario.
 
@@ -235,7 +235,7 @@ class OATConfigurator(Configurator):
             instance_features: Dict of instance names and lists of features.
             metric (str): Optimization metric.
             popSize (int): Population size of configs per generation (OAT).
-            evlaLimit (int): Maximum number of evaluations (OAT).
+            evalLimit (int): Maximum number of evaluations (OAT).
         """
         if not instances:
             instances = self.train_set
@@ -278,7 +278,7 @@ class OATConfigurator(Configurator):
             instance_dir=inst_dir,
             path_to_OAT=oat_dir,
             popSize=popSize,
-            evlaLimit=evlaLimit
+            evalLimit=evalLimit
         )
 
         self.scenario = scenario
@@ -310,7 +310,7 @@ class OATConfigurator(Configurator):
             planner_timelimit = self.scenario['timelimit']
             min_budget = self.scenario['start_gen']
             max_budget = self.scenario['end_gen']
-            evalLimit = self.scenario['evlaLimit']
+            evalLimit = self.scenario['evalLimit']
             popSize = self.scenario['popSize']
 
             p = subprocess.Popen(['./Optano.Algorithm.Tuner.Application' +
