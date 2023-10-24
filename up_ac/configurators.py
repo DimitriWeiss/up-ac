@@ -254,10 +254,10 @@ class Configurator():
                           avg_f, '\n')
                 if metric == 'quality':
                     print(f'\nAverage performance on {nr_inst} instances:',
-                              -avg_f, '\n')
+                          -avg_f, '\n')
                 return avg_f
             else:
-                    print('\nPerformance could not be evaluated. No plans found.')
+                print('\nPerformance could not be evaluated. No plans found.')
                 return None
         else:
             return None
