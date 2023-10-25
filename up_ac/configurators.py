@@ -6,6 +6,7 @@ from up_ac.AC_interface import *
 
 import json
 import timeit
+import time
 
 
 class Configurator():
@@ -171,6 +172,13 @@ class Configurator():
             float: Average performance on the instances.
         """
         if incumbent is not None:
+            # Avoid (meaningless) pebble AssertionError on Google Colab
+            try:
+                import google.colab
+                IN_COLAB = True
+            except:
+                IN_COLAB = False
+
             if not instances:
                 instances = self.test_set
             nr_inst = len(instances)
@@ -189,21 +197,34 @@ class Configurator():
 
                 try:
                     if metric == 'runtime':
-                        @concurrent.process(timeout=planner_timelimit)
-                        def solve(incumbent, metric, engine,
-                                  mode, pddl_problem):
-                            f = \
-                                gaci.run_engine_config(incumbent,
-                                                       metric, engine,
-                                                       mode, pddl_problem)
+                        if IN_COLAB:
+                            def solve(incumbent, metric, engine,
+                                      mode, pddl_problem):
+                                f = \
+                                    gaci.run_engine_config(incumbent,
+                                                           metric, engine,
+                                                           mode, pddl_problem)
 
-                            return f
+                                return f
+                        else:
+                            @concurrent.process(timeout=planner_timelimit)
+                            def solve(incumbent, metric, engine,
+                                      mode, pddl_problem):
+                                f = \
+                                    gaci.run_engine_config(incumbent,
+                                                           metric, engine,
+                                                           mode, pddl_problem)
+
+                                return f
 
                         f = solve(incumbent, metric, engine,
                                   mode, pddl_problem)
                         
                         try:
-                            f = f.result()
+                            if IN_COLAB:
+                                f = f
+                            else:
+                                f = f.result()
                         except (TimeoutError, AssertionError):
                             f = planner_timelimit
                     elif metric == 'quality':                    
@@ -224,7 +245,7 @@ class Configurator():
                 if metric == 'runtime':
                     if f is None:
                         f = planner_timelimit
-                    elif f == 'measure':
+                    else:
                         f = timeit.default_timer() - start
                         if f > planner_timelimit:
                             f = planner_timelimit
@@ -251,9 +272,9 @@ class Configurator():
                 avg_f = avg_f / nr_inst
                 if metric == 'runtime':
                     print(f'\nAverage performance on {nr_inst} instances:',
-                          avg_f, '\n')
+                          avg_f, 'seconds\n')
                 if metric == 'quality':
-                    print(f'\nAverage performance on {nr_inst} instances:',
+                    print(f'\nAverage quality performance on {nr_inst} instances:',
                           -avg_f, '\n')
                 return avg_f
             else:

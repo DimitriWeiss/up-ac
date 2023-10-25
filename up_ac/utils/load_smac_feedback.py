@@ -19,6 +19,4 @@ def get_feedback(config, instance, seed=0):
 
     feedback = fb(config, instance, seed, reader)
 
-    print(fb)
-
     return feedback
