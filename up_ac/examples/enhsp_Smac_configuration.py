@@ -40,6 +40,7 @@ for instance in instances:
             instance.rsplit('/', 1)[0] + '/domain.pddl',
             instance)
 
+
 up.shortcuts.get_environment().credits_stream = None
 
 

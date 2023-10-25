@@ -5,6 +5,7 @@ from unified_planning.shortcuts import *
 from up_ac.utils.ac_feedback import qaul_feedback, runtime_feedback
 from up_ac.utils.patches import patch_pcs
 from tarski.io import PDDLReader as treader
+import logging
 
 from ConfigSpace.read_and_write import pcs
 
@@ -41,8 +42,9 @@ class GenericACInterface():
             list: Computed instance features.
 
         """
+        logging.getLogger().setLevel(logging.ERROR)
         try:
-            # TODO catch duplicte errors in tarski
+            # TODO catch duplicate errors in tarski
             features = []
             self.treader.parse_domain(domain)
             problem = self.treader.parse_instance(instance)
