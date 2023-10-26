@@ -245,7 +245,7 @@ class Configurator():
                 if metric == 'runtime':
                     if f is None:
                         f = planner_timelimit
-                    else:
+                    elif 'measure':
                         f = timeit.default_timer() - start
                         if f > planner_timelimit:
                             f = planner_timelimit
