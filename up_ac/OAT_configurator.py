@@ -47,15 +47,14 @@ class OATConfigurator(Configurator):
         """
         Generate the function to run the engine and obtain feedback.
 
-        Parameters:
-            gaci: AC interface object.
-            engine (str): Engine name.
-            metric (str): Optimization metric ('runtime' or 'quality').
-            mode (str): Type of planning.
-            gray_box (bool): True if gray box to use.
+        :param gaci: AC interface object.
+        :param str engine: Engine name.
+        :param str metric: Optimization metric ('runtime' or 'quality').
+        :param str mode: Type of planning.
+        :param bool gray_box: True if gray box to use.
 
-        Returns:
-            function: Planner feedback function.
+        :return: Planner feedback function.
+        :rtype: function
         """
         if engine in self.capabilities[metric][mode]:
             self.metric = metric
@@ -79,14 +78,13 @@ class OATConfigurator(Configurator):
                 """
                 Planner feedback function.
 
-                Parameters:
-                    config: Configuration for the planner.
-                    instance: Problem instance.
-                    reader: Reader object for parsing the problem.
+                :param config: Configuration for the planner.
+                :param instance: Problem instance.
+                :param reader: Reader object for parsing the problem.
 
-                Returns:
-                    float: Feedback value based on the planner's performance.
-                """ 
+                :return: Feedback value based on the planner's performance.
+                :rtype: float
+                """
                 path = os.getcwd().rsplit('up_ac', 1)[0]
                 if path[-1] != "/":
                     path += "/"
@@ -223,23 +221,23 @@ class OATConfigurator(Configurator):
         """
         Set up algorithm configuration scenario.
 
-        Parameters:
-            engine (str): Engine name.
-            param_space: ConfigSpace object.
-            gaci: AC interface object.
-            configuration_time (int): Overall configuration time budget.
-            n_trials (int): Maximum number of engine evaluations.
-            min_budget (int): Minimum number of instances to use.
-            max_budget (int): Maximum number of instances to use.
-            crash_cost (int): Cost to use if engine fails.
-            planner_timelimit (int): Maximum runtime per evaluation.
-            n_workers (int): Number of cores to utilize.
-            instances (list): Problem instance paths.
-            instance_features: Dict of instance names and lists of features.
-            metric (str): Optimization metric.
-            popSize (int): Population size of configs per generation (OAT).
-            evalLimit (int): Maximum number of evaluations (OAT).
+        :param str engine: Engine name.
+        :param param_space: ConfigSpace object.
+        :param gaci: AC interface object.
+        :param int configuration_time: Overall configuration time budget.
+        :param int n_trials: Maximum number of engine evaluations.
+        :param int min_budget: Minimum number of instances to use.
+        :param int max_budget: Maximum number of instances to use.
+        :param int crash_cost: Cost to use if engine fails.
+        :param int planner_timelimit: Maximum runtime per evaluation.
+        :param int n_workers: Number of cores to utilize.
+        :param list instances: Problem instance paths.
+        :param instance_features: Dictionary of instance names and lists of features.
+        :param str metric: Optimization metric.
+        :param int popSize: Population size of configs per generation (OAT).
+        :param int evalLimit: Maximum number of evaluations (OAT).
         """
+
         if not instances:
             instances = self.train_set
         self.crash_cost = crash_cost
@@ -290,12 +288,11 @@ class OATConfigurator(Configurator):
         """
         Run the algorithm configuration.
 
-        Parameters:
-            feedback_function (function): Function to run the engine and get feedback.
-            gray_box (bool): True, if gray box usage.
-        
-        Returns:
-            tuple: Tuple containing the best configuration found and None.
+        :param function feedback_function: Function to run the engine and get feedback.
+        :param bool gray_box: True if gray box usage.
+
+        :return: Tuple containing the best configuration found and None.
+        :rtype: tuple
         """
         if feedback_function is not None:
 

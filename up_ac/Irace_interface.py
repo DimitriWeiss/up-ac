@@ -32,19 +32,16 @@ class IraceInterface(GenericACInterface):
         This function takes a configuration in the algorithm configuration format, specific to the provided engine,
         and transforms it into the corresponding format for the given engine.
 
-        Args:
-            engine (str): Name of the engine for which the configuration is being transformed.
-            configuration (dict): A dictionary containing parameter names with their values.
+        :param str engine: Name of the engine for which the configuration is being transformed.
+        :param dict configuration: A dictionary containing parameter names with their values.
 
-        Returns:
-            dict: A dictionary containing the transformed configuration for the specified engine.
+        :return: A dictionary containing the transformed configuration for the specified engine.
+        :rtype: dict
 
-        Raises:
-            ValueError: If the specified engine is not supported.
+        :raises ValueError: If the specified engine is not supported.
 
-        Note:
+        :note:
             The transformation process varies based on the engine type and specific configurations.
-
         """
         config = transform_pcs(engine, configuration)
         if engine == 'lpg':
@@ -147,14 +144,13 @@ class IraceInterface(GenericACInterface):
         """
         Retrieve parameter space information for configuring irace.
 
-        Parameters:
-            param_space (ConfigSpace.ConfigurationSpace): The ConfigSpace object defining the parameter space.
+        :param param_space: The ConfigSpace object defining the parameter space.
+        :type param_space: ConfigSpace.ConfigurationSpace
 
-        Returns:
-            tuple: A tuple containing:
-                - dict: Default values for parameters.
-                - bool: Indicates if there are forbidden parameter value combinations.
-
+        :return: A tuple containing:
+            - dict: Default values for parameters.
+            - bool: Indicates if there are forbidden parameter value combinations.
+        :rtype: tuple
         """
 
 
@@ -162,14 +158,15 @@ class IraceInterface(GenericACInterface):
             """
             Set conditions as strings for irace parameter space.
 
-            Parameters:
-                c (ConfigSpace.conditions): The condition to be set.
-                parent (ConfigSpace.Parameter): The parent parameter for the condition.
-                cond_params (dict): A dictionary to store conditions as strings.
+            :param c: The condition to be set.
+            :type c: ConfigSpace.conditions
+            :param parent: The parent parameter for the condition.
+            :type parent: ConfigSpace.Parameter
+            :param cond_params: A dictionary to store conditions as strings.
+            :type cond_params: dict
 
-            Returns:
-                dict: A dictionary with conditions as strings.
-
+            :return: A dictionary with conditions as strings.
+            :rtype: dict
             """
             if isinstance(c, InCondition):
                 if isinstance(parent, CategoricalHyperparameter):

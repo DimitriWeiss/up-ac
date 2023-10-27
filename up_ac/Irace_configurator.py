@@ -22,19 +22,21 @@ class IraceConfigurator(Configurator):
         """
         Generate a function to run the planning engine and obtain feedback.
 
-        Parameters:
-            gaci (object): AC interface object.
-            engine (str): Name of the planning engine.
-            metric (str): Metric type, either 'runtime' or 'quality'.
-            mode (str): Type of planning mode.
-            gray_box (bool, optional): True if using a gray box approach.
+        :param gaci: AC interface object.
+        :type gaci: object
+        :param engine: Name of the planning engine.
+        :type engine: str
+        :param metric: Metric type, either 'runtime' or 'quality'.
+        :type metric: str
+        :param mode: Type of planning mode.
+        :type mode: str
+        :param gray_box: True if using a gray box approach (optional).
+        :type gray_box: bool, optional
 
-        Returns:
-            function: A function to provide feedback based on the specified parameters.
+        :return: A function to provide feedback based on the specified parameters.
+        :rtype: function
 
-        Raises:
-            ValueError: If the provided engine, metric, or mode is not supported.
-
+        :raises ValueError: If the provided engine, metric, or mode is not supported.
         """
         if engine in self.capabilities[metric][mode]:
             self.metric = metric
@@ -135,24 +137,34 @@ class IraceConfigurator(Configurator):
         """
         Set up the algorithm configuration scenario.
 
-        Parameters:
-            engine (str): Name of the engine.
-            param_space (ConfigSpace.ConfigurationSpace): The ConfigSpace object defining the parameter space.
-            gaci (object): AC interface object.
-            configuration_time (int, optional): Overall configuration time budget.
-            n_trials (int, optional): Maximum number of engine evaluations.
-            min_budget (int, optional): Minimum number of instances to use.
-            max_budget (int, optional): Maximum number of instances to use.
-            crash_cost (int, optional): The cost to use if the engine fails.
-            planner_timelimit (int, optional): Maximum runtime per evaluation.
-            n_workers (int, optional): Number of cores to utilize.
-            instances (list, optional): List of problem instance paths.
-            instance_features (dict, optional): Dictionary containing instance names and lists of features.
-            metric (str, optional): Optimization metric, either 'runtime' or 'quality'.
+        :param engine: Name of the engine.
+        :type engine: str
+        :param param_space: The ConfigSpace object defining the parameter space.
+        :type param_space: ConfigSpace.ConfigurationSpace
+        :param gaci: AC interface object.
+        :type gaci: object
+        :param configuration_time: Overall configuration time budget (optional).
+        :type configuration_time: int, optional
+        :param n_trials: Maximum number of engine evaluations (optional).
+        :type n_trials: int, optional
+        :param min_budget: Minimum number of instances to use (optional).
+        :type min_budget: int, optional
+        :param max_budget: Maximum number of instances to use (optional).
+        :type max_budget: int, optional
+        :param crash_cost: The cost to use if the engine fails (optional).
+        :type crash_cost: int, optional
+        :param planner_timelimit: Maximum runtime per evaluation (optional).
+        :type planner_timelimit: int, optional
+        :param n_workers: Number of cores to utilize (optional).
+        :type n_workers: int, optional
+        :param instances: List of problem instance paths (optional).
+        :type instances: list, optional
+        :param instance_features: Dictionary containing instance names and lists of features (optional).
+        :type instance_features: dict, optional
+        :param metric: Optimization metric, either 'runtime' or 'quality' (optional).
+        :type metric: str, optional
 
-        Raises:
-            ValueError: If the provided metric is not supported.
-
+        :raises ValueError: If the provided metric is not supported.
         """
         if not instances:
             instances = self.train_set
@@ -220,15 +232,15 @@ class IraceConfigurator(Configurator):
         """
         Run the algorithm configuration process.
 
-        Parameters:
-            feedback_function (function, optional): A function to run the engine and obtain feedback.
-            gray_box (bool, optional): True if using a gray box approach.
+        :param feedback_function: A function to run the engine and obtain feedback (optional).
+        :type feedback_function: function, optional
+        :param gray_box: True if using a gray box approach (optional).
+        :type gray_box: bool, optional
 
-        Returns:
-            tuple or None: A tuple containing:
-                - dict: The best configuration found.
-                - None: If there is no feedback function.
-
+        :returns: A tuple containing:
+            - dict: The best configuration found.
+            - None: If there is no feedback function.
+        :rtype: tuple or None
         """
 
         if feedback_function is not None:
