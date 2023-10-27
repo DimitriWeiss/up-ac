@@ -1,5 +1,5 @@
 ===============
-Project's Name
+up_ac
 ===============
 
 Welcome to Project's documentation! Please check out how to install it using the :ref:`installation` guide.
