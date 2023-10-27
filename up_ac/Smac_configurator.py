@@ -30,20 +30,18 @@ class SmacConfigurator(Configurator):
         """
         Generate a function to run the planning engine and obtain feedback.
 
-        Parameters:
-            gaci (ACInterface): Algorithm Configuration Interface object.
-            engine (str): Name of the planning engine.
-            metric (str): Metric to optimize, either 'runtime' or 'quality'.
-            mode (str): Type of planning.
-            gray_box (bool, optional): True if using a gray box, False otherwise.
+        :param ACInterface gaci: Algorithm Configuration Interface object.
+        :param str engine: Name of the planning engine.
+        :param str metric: Metric to optimize, either 'runtime' or 'quality'.
+        :param str mode: Type of planning.
+        :param bool gray_box: True if using a gray box, False otherwise (optional).
 
-        Returns:
-            function: A planner feedback function that takes configuration, instance, seed, and reader.
+        :return: A planner feedback function that takes configuration, instance, seed, and reader.
+        :rtype: function
 
-        Raises:
-            ValueError: If the provided engine is not supported for the given metric and mode.
-
+        :raises ValueError: If the provided engine is not supported for the given metric and mode.
         """
+
         if engine in self.capabilities[metric][mode]:
             self.metric = metric
 
@@ -162,24 +160,21 @@ class SmacConfigurator(Configurator):
         """
         Set up the algorithm configuration scenario for SMAC (Sequential Model-based Algorithm Configuration).
 
-        Parameters:
-            engine (str): The name of the planning engine.
-            param_space (ConfigSpace.ConfigurationSpace): ConfigSpace object defining the parameter space.
-            gaci (ACInterface): AC interface object.
-            configuration_time (int, optional): Overall configuration time budget in seconds (default is 120).
-            n_trials (int, optional): Maximum number of engine evaluations (default is 400).
-            min_budget (int, optional): Minimum number of instances to use (default is 1).
-            max_budget (int, optional): Maximum number of instances to use (default is 3).
-            crash_cost (int, optional): The cost to use if the engine fails (default is 0).
-            planner_timelimit (int, optional): Maximum runtime per evaluation for the planner (default is 30).
-            n_workers (int, optional): Number of cores to utilize (default is 1).
-            instances (list, optional): List of problem instance paths (default is empty list, uses train_set).
-            instance_features (dict, optional): Dictionary containing instance names and lists of features (default is None).
-            metric (str, optional): The optimization metric, either 'runtime' or 'quality' (default is 'runtime').
+        :param str engine: The name of the planning engine.
+        :param ConfigSpace.ConfigurationSpace param_space: ConfigSpace object defining the parameter space.
+        :param ACInterface gaci: AC interface object.
+        :param int configuration_time: Overall configuration time budget in seconds (default is 120).
+        :param int n_trials: Maximum number of engine evaluations (default is 400).
+        :param int min_budget: Minimum number of instances to use (default is 1).
+        :param int max_budget: Maximum number of instances to use (default is 3).
+        :param int crash_cost: The cost to use if the engine fails (default is 0).
+        :param int planner_timelimit: Maximum runtime per evaluation for the planner (default is 30).
+        :param int n_workers: Number of cores to utilize (default is 1).
+        :param list instances: List of problem instance paths (default is empty list, uses train_set).
+        :param dict instance_features: Dictionary containing instance names and lists of features (default is None).
+        :param str metric: The optimization metric, either 'runtime' or 'quality' (default is 'runtime').
 
-        Raises:
-            ValueError: If an unsupported metric is provided.
-
+        :raises ValueError: If an unsupported metric is provided.
         """
         if not instances:
             instances = self.train_set
@@ -213,13 +208,12 @@ class SmacConfigurator(Configurator):
         """
         Run the algorithm configuration optimization.
 
-        Parameters:
-            feedback_function (function, optional): A function to run the engine and obtain feedback.
-            gray_box (bool, optional): True if gray box usage is enabled, False otherwise.
+        :param function feedback_function: A function to run the engine and obtain feedback (optional).
+        :param bool gray_box: True if gray box usage is enabled, False otherwise (optional).
 
-        Returns:
-            tuple or None: A tuple containing the best configuration found and additional information (if available).
-                        Returns None if feedback_function is not provided.
+        :return: A tuple containing the best configuration found and additional information (if available).
+                Returns None if feedback_function is not provided.
+        :rtype: tuple or None
         """
         if feedback_function is not None:
             # Import feedback function, since dask cannot pickle local objects            

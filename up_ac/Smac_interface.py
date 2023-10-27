@@ -14,16 +14,13 @@ class SmacInterface(GenericACInterface):
         """
         Transform a configuration to the format expected by the planning engines.
 
-        Parameters:
-            engine (str): Name of the planning engine.
-            configuration (dict): The configuration with parameter names and values.
+        :param str engine: Name of the planning engine.
+        :param dict configuration: The configuration with parameter names and values.
 
-        Returns:
-            dict: The transformed configuration in the engine's expected format.
+        :return: The transformed configuration in the engine's expected format.
+        :rtype: dict
 
-        Raises:
-            ValueError: If the provided engine list is empty or contains non-string elements.
-
+        :raises ValueError: If the provided engine list is empty or contains non-string elements.
         """
 
         config = transform_pcs(engine, configuration)

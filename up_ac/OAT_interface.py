@@ -13,7 +13,22 @@ from ConfigSpace.conditions import (
 
 
 class OATInterface(GenericACInterface):
-    """OAT AC interface."""
+    """
+    OAT AC interface.
+
+    OAT does not handle forbidden parameter value combinations.
+    OAT can handle multiple parent and 1 child conditionals, but not one parent multiple children conditionals.
+    We naively just take the first one in the list.
+    OAT does not support conditionals that are conditional.
+    We leave them out naively.
+    OAT does not support conditionals with value ranges.
+    We naively only use the first value.
+
+    Note: Although this is suboptimal, invalid configurations will
+    lead to crash or bad results such that OAT will rate them
+    as subpar.
+    
+    """
 
     def __init__(self):
         """Initialize OAT interface."""
@@ -23,12 +38,13 @@ class OATInterface(GenericACInterface):
         """
         Transform a configuration to the UP engine format.
 
-        Parameters:
-            engine (str): The name of the engine.
-            configuration (dict): Parameter names with values.
+        :param engine: The name of the engine.
+        :type engine: str
+        :param configuration: Parameter names with values.
+        :type configuration: dict
 
-        Returns:
-            dict: The transformed configuration.
+        :return: The transformed configuration.
+        :rtype: dict
         """
         config = transform_pcs(engine, configuration)
         if engine == 'lpg':
@@ -137,24 +153,12 @@ class OATInterface(GenericACInterface):
         """
         Generate the OAT parameter tree in XML format.
 
-        OAT does not handle forbidden parameter value combinations.
-        OAT can handle multiple parent and 1 child conditionals,
-        but not one parent multiple children conditionals.
-        We naively just take the first one in the list.
-        OAT does not support conditionals that are conditional.
-        We leave them out naively.
-        OAT does not support conditionals with value ranges.
-        We naively only use the first value.
+        :param param_space: ConfigSpace object.
+        :type param_space: ConfigSpace.ConfigurationSpace
 
-        Note: Although this is suboptimal, invalid configurations will
-        lead to crash or bad results such that OAT will rate them
-        as subpar.
+        :return: OAT parameter tree in XML format.
+        :rtype: str
 
-        Parameters:
-            param_space (ConfigSpace.ConfigurationSpace): ConfigSpace object.
-
-        Returns:
-            str: OAT parameter tree in XML format.
         """
 
         param_file = '<?xml version="1.0" encoding="utf-8" ?>\n'
@@ -192,16 +196,19 @@ class OATInterface(GenericACInterface):
             """
             Set conditional relations between parameters.
 
-            Parameters:
-                children (dict): Child parameters.
-                param_file (str): OAT parameter tree to be saved in XML.
-                to_set (list): Parameter names to still be included.
-                parents (dict): Parent parameters.
-                tab (str): Indicates depth of tree (\t).
+            :param children: Child parameters.
+            :type children: dict
+            :param param_file: OAT parameter tree to be saved in XML.
+            :type param_file: str
+            :param to_set: Parameter names to still be included.
+            :type to_set: list
+            :param parents: Parent parameters.
+            :type parents: dict
+            :param tab: Indicates depth of tree (\t).
+            :type tab: str
 
-            Returns:
-                str: OAT parameter tree to be saved in XML.
-                list: Updated parameter names to still be included.
+            :return: Updated OAT parameter tree and parameter names to still be included.
+            :rtype: tuple
             """
             for child, value in children.items():
                 if child in to_set:

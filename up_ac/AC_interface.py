@@ -34,13 +34,13 @@ class GenericACInterface():
         """
         Compute instance features of a given PDDL instance.
 
-        Parameters:
-            domain (str): PDDL string representing the problem domain.
-            instance (str): PDDL string representing the problem instance.
+        :param domain: PDDL string representing the problem domain.
+        :type domain: str
+        :param instance: PDDL string representing the problem instance.
+        :type instance: str
 
-        Returns:
-            list: Computed instance features.
-
+        :returns: Computed instance features.
+        :rtype: list
         """
         logging.getLogger().setLevel(logging.ERROR)
         try:
@@ -68,11 +68,12 @@ class GenericACInterface():
         """
         Read parameter configuration space (PCS) files for specified engines.
 
-        Parameters:
-            engines (list of str): Names of the engines.
-            pcs_dir (str): Path to the directory containing the PCS files.
-
+        :param engines: Names of the engines.
+        :type engines: list of str
+        :param pcs_dir: Path to the directory containing the PCS files.
+        :type pcs_dir: str
         """
+
         if pcs_dir[-1] != '/':
             pcs_dir = pcs_dir + '/'
 
@@ -95,17 +96,17 @@ class GenericACInterface():
         """
         Get feedback from a planning engine after a run.
 
-        Parameters:
-            engine (str): Name of the planning engine.
-            fbtype (str): Type of feedback: 'quality' or 'runtime'.
-            result (object): Planning result.
+        :param engine: Name of the planning engine.
+        :type engine: str
+        :param fbtype: Type of feedback: 'quality' or 'runtime'.
+        :type fbtype: str
+        :param result: Planning result.
+        :type result: object
 
-        Returns:
-            object: Feedback based on the specified feedback type.
+        :returns: Feedback based on the specified feedback type.
+        :rtype: object
 
-        Raises:
-            ValueError: If an unsupported feedback type is provided.
-
+        :raises ValueError: If an unsupported feedback type is provided.
         """
         if fbtype == 'quality':
             feedback = qaul_feedback(engine, result)
@@ -119,20 +120,23 @@ class GenericACInterface():
         """
         Execute a configured engine run.
 
-        Parameters:
-            config (dict): Configuration of the engine.
-            metric (str): Metric for the evaluation: 'runtime' or 'quality'.
-            engine (str): Name of the engine.
-            plantype (str): Type of planning: 'OneshotPlanner' or 'AnytimePlanner'.
-            problem (str): Path to the problem instance.
-            gray_box_listener (bool, optional): True if using a gray box approach.
+        :param config: Configuration of the engine.
+        :type config: dict
+        :param metric: Metric for the evaluation: 'runtime' or 'quality'.
+        :type metric: str
+        :param engine: Name of the engine.
+        :type engine: str
+        :param plantype: Type of planning: 'OneshotPlanner' or 'AnytimePlanner'.
+        :type plantype: str
+        :param problem: Path to the problem instance.
+        :type problem: str
+        :param gray_box_listener: True if using a gray box approach (optional).
+        :type gray_box_listener: bool
 
-        Returns:
-            object: Result from the configured engine run.
+        :returns: Result from the configured engine run.
+        :rtype: object
 
-        Raises:
-            ValueError: If an unsupported planning type is provided.
-
+        :raises ValueError: If an unsupported planning type is provided.
         """
         if plantype == 'OneshotPlanner':
             config = self.transform_conf_from_ac(engine, config)
