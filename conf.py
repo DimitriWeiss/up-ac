@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'up_ac'
-copyright = '2023, Diitri Weiss'
+copyright = '2023, Dimitri Weiss'
 author = 'Dimitri Weiss'
 
 # The full version, including alpha/beta/rc tags
