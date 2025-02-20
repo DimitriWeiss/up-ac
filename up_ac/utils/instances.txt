@@ -1,3 +1,0 @@
-/media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/miconic/problem.pddl
-/media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/depot/problem.pddl
-/media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl

@@ -1,5 +1,0 @@
-('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/p02.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/domain.pddl')
-('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/p04.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/domain.pddl')
-('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/spider/p14.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/spider/domain.pddl')
-('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/p19.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/domain.pddl')
-('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/p10.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/nurikabe/domain.pddl')

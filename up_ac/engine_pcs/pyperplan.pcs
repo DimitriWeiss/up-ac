@@ -1,5 +1,0 @@
-search {astar, wastar, gbf, bfs, ehs, ids} [astar] # add 'sat', if minisat available
-heuristic {blind, hadd, hmax, hsa, hff, lmcut, landmark} [hff]
-
-# Conditional: <is active> if | <parameter> has value in {x,...,y}
-heuristic | search in {bfs, ids} # add 'sat', if minisat available

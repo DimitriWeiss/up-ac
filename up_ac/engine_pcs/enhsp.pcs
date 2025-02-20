@@ -1,2 +1,0 @@
-heuristic {hadd, hmax, blind} [hadd]
-search_algorithm {gbfs, astar, wastar} [gbfs]
