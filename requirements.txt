@@ -1,5 +1,4 @@
 antlr4-python3-runtime==4.7.2
-backports.zoneinfo==0.2.1
 cffi==1.16.0
 click==8.1.4
 cloudpickle==2.2.1
