@@ -19,7 +19,7 @@ cnsoleOutput*
 
 # draft scripts
 draft.py
-.idea
+.idea/
 
 # R
 .Rhistory
@@ -34,20 +34,20 @@ tests/incumbent_tamer.json
 tests/incumbent_pyperplan.json
 tests/input.cnf
 tests/status
-examples/selector
-examples/smac_output_*
+up_ac/examples/selector
+up_ac/examples/smac_output_*
 
 # Research
 examples/paper_tests
 paper_experiments
 
 # Misc
-engine_pcs/lpg_to_revise.pcs
-examples/paper_tests
-examples/baseline_performance_enhsp.py
-examples/*quality.py
-examples/*runtime.py
-examples/*.txt
-examples/selector
-utils/sel_feedback.pkl
-utils/sel_feedback_setting
+up_ac/engine_pcs/lpg_to_revise.pcs
+up_ac/examples/paper_tests
+up_ac/examples/baseline_performance_enhsp.py
+up_ac/examples/*quality.py
+up_ac/examples/*runtime.py
+up_ac/examples/*.txt
+up_ac/examples/selector
+up_ac/utils/sel_feedback.pkl
+up_ac/utils/sel_feedback_setting
