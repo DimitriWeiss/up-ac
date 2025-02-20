@@ -8,6 +8,7 @@ __pycache__/
 
 # pyenv
 .python-version
+.python-version_UPAC_clean
 
 # SMAC files
 smac3_output/
@@ -18,6 +19,7 @@ cnsoleOutput*
 
 # draft scripts
 draft.py
+.idea
 
 # R
 .Rhistory
@@ -39,3 +41,13 @@ examples/smac_output_*
 examples/paper_tests
 paper_experiments
 
+# Misc
+engine_pcs/lpg_to_revise.pcs
+examples/paper_tests
+examples/baseline_performance_enhsp.py
+examples/*quality.py
+examples/*runtime.py
+examples/*.txt
+examples/selector
+utils/sel_feedback.pkl
+utils/sel_feedback_setting
