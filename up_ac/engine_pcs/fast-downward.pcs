@@ -1,0 +1,44 @@
+fast_downward_search_config {astar, eager, eager_greedy, lazy_greedy, lazy_wastar} [astar] # SearchEngine
+astar_h {merge_and_shrink, blind, lmcut, cea, cg, ff, add} [blind]
+greedy {true, false} [true]
+before_shrinking {true, false} [true]
+before_merging {true, false} [true]
+max_states [20000, 200000000] [200000]i
+threshold_before_merge {true, false} [true]
+m [1,10] [1]i
+
+number_h {1,2,3} [1]
+h_1 {ff, cea, cg, add} [ff]
+h_2 {ff, cea, cg, add} [cea]
+h_3 {ff, cea, cg, add} [cg]
+weight [1,10] [3]i
+w [1,10] [3]i
+cost_type {normal, one, plusone} [normal]
+preferred_1 [1,3] [1]i
+preferred_2 [1,3] [2]i
+preferred_3 [1,3] [3]i
+nr_preferred {1,2,3} [1]
+
+# Conditional
+astar_h | fast_downward_search_config in {astar}
+greedy | fast_downward_search_config in {astar}
+before_shrinking | fast_downward_search_config in {astar}
+before_merging | fast_downward_search_config in {astar}
+max_states | fast_downward_search_config in {astar}
+threshold_before_merge | fast_downward_search_config in {astar}
+number_h | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+nr_preferred | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+h_2 | number_h in {2,3}
+h_2 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+h_3 | number_h in {3}
+h_3 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+preferred_2 | nr_preferred in {2,3}
+preferred_2 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+preferred_3 | nr_preferred in {3}
+preferred_3 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+w | fast_downward_search_config in {lazy_wastar}
+weight | fast_downward_search_config in {eager}
+
+# Forbidden
+{before_shrinking=false, before_merging=false}
+

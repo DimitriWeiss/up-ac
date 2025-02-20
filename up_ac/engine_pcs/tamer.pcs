@@ -1,0 +1,2 @@
+heuristic {hadd, hmax, hlandmarks, hff, blind} [hadd]
+weight [0.0, 1.0] [0.5]
