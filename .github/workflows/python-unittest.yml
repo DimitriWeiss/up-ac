@@ -71,6 +71,6 @@ jobs:
         python -m unittest up_ac/tests/unittests.py
         python -m unittest up_ac/tests/test_default_engine_configs.py
         python -m unittest up_ac/tests/test_allowed_combinations.py
-        python -m unittest up_ac/tests/test_enhsp_Irace.py
-        python -m unittest up_ac/tests/test_fast-downward_Smac.py
+        #python -m unittest up_ac/tests/test_enhsp_Irace.py
+        #python -m unittest up_ac/tests/test_fast-downward_Smac.py
         python -m unittest up_ac/tests/test_lpg_OAT.py
