@@ -29,11 +29,12 @@ extension is not available on your system, you can install it via:
 
 Currently these planning engines are integrated and confirmed to be working:
 
- - lpg
- - fast-downward
- - enhsp
- - tamer
- - pyperplan
+ - LPG
+ - Fast-Downward
+ - SymK
+ - ENHSP
+ - Tamer
+ - Pyperplan
 
 due to the unified-planning framework still being in development.
 

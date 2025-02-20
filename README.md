@@ -22,11 +22,12 @@ pip install --pre unified-planning[<engine_name>]
 
 The development of the unified planning framework is still ongoing. Hence, some of the integrated planning engines are not yet available for automated algorithm configuration. Planning engines confirmed to work in this implementation are:
 
-- lpg
-- fast-downward
-- enhsp
-- tamer
-- pyperplan
+- LPG
+- Fast-Downward
+- SymK
+- ENHSP
+- Tamer
+- Pyperplan
 
 It is possible to adjust the configuration space of each engine according to your needs by passing it to the set_scenario() function. Read (https://automl.github.io/ConfigSpace/main/) for details on how to define a ConfigSpace.
 
@@ -45,7 +46,13 @@ The methods integrated are:
 
 ## SMAC3
 
-Smac is automatically installed with the installation of up_ac. For further details refer to (https://automl.github.io/SMAC3/main/).
+Smac can be installed via 
+
+```
+pip install smac==2.0.1
+```
+
+. For further details refer to (https://automl.github.io/SMAC3/main/).
 
 ## Optano Algorithm Tuner (OAT)
 
@@ -77,6 +84,16 @@ install.packages("irace", repos = "https://cloud.r-project.org")
 The algorithm configuration implementation will then access irace via the python package rpy2.
 
 For further details on Irace refer to (https://github.com/cran/irace) and the python implementation of irace (https://github.com/auto-optimization/iracepy).
+
+## Selector
+
+Selector can be installed via
+
+```
+pip install selector-ac
+```
+
+Selector is an ensemble-based automated algorithm configurator and incorporates functionalities and models from CPPL, GGA and SMAC. Since Selector is implemented with a different version of SMAC than the one used for the SMAC configurator in this library, you should use a separate environment/ virtual environment to configure planners with Selector. For further details on Selector refer to (https://github.com/dotbielefeld/selector).
 
 ## Acknowledgments
 

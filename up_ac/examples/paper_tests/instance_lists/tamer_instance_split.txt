@@ -1,0 +1,14 @@
+Train:
+
+Childsnack
+Hiking
+Visitall
+Snake
+Quantum-layout
+
+Test:
+
+Thoughtful
+Termes
+Slitherlink
+

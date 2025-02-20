@@ -9,7 +9,7 @@ def transform_pcs(engine, configuration):
     """
     config = {}
 
-    if engine == 'lpg':
+    if engine in ('lpg', 'lpg-anytime'):
         for c in configuration.keys():
             config['-' + c] = str(configuration[c])
 

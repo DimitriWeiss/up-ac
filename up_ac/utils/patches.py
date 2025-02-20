@@ -19,7 +19,7 @@ def patch_pcs(pcs):
     pcs.pp_cat_param = pcs.pp_param_name + "{" + pcs.pp_choices + "}" + \
         "[" + pcs.pp_param_name + "]"
 
-    def _new_read(pcs_string: Iterable[str]) -> ConfigurationSpace:
+    def _new_read(pcs_string) -> ConfigurationSpace:
         """
         Read in a 
         :py:class:`~ConfigSpace.configuration_space.ConfigurationSpace`
@@ -75,6 +75,8 @@ def patch_pcs(pcs):
 
             if "|" in line:
                 # It's a condition
+                print(pp_condition)
+                print(dir(pp_condition))
                 try:
                     c = pp_condition.parseString(line)
                     conditions.append(c)

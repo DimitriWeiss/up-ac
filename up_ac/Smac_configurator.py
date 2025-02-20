@@ -1,17 +1,39 @@
-"""Functionalities for managing and calling configurators."""
+"""Functionalities for managing and calling SMAC."""
 from smac import Scenario
 from smac import AlgorithmConfigurationFacade
 from unified_planning.exceptions import UPProblemDefinitionError, UPException
-from pebble import concurrent
 import os
 import dill
 import sys
-from concurrent.futures import TimeoutError
 
-from up_ac.AC_interface import *
-from up_ac.configurators import Configurator
+from AC_interface import *
+from configurators import Configurator
+from utils.patch_daskrunner import patch_daskrunner
 
 import timeit
+import signal
+from contextlib import contextmanager
+from pebble import concurrent
+from pebble.common import ProcessExpired
+
+# We do this only to be able to set the SMAC output dir!
+AlgorithmConfigurationFacade = patch_daskrunner(AlgorithmConfigurationFacade)
+
+
+class TimeoutException(Exception):
+    pass
+
+
+@contextmanager
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException("Timed out!")
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
 
 
 class SmacConfigurator(Configurator):
@@ -48,83 +70,110 @@ class SmacConfigurator(Configurator):
             def planner_feedback(config, instance, seed, reader):
                 start = timeit.default_timer()
                 instance_p = f'{instance}'
-                domain_path = instance_p.rsplit('/', 1)[0]
-                domain = f'{domain_path}/domain.pddl'
-                pddl_problem = reader.parse_problem(f'{domain}',
-                                                    f'{instance_p}')
-
                 # Since Smac handles time limits itself,
                 # we do not use concurrent, as with other AC tools
-                try:
-                    feedback = \
-                        gaci.run_engine_config(config,
-                                               metric,
-                                               engine,
-                                               mode,
-                                               pddl_problem)
-                except (AssertionError, NotImplementedError,
-                        UPProblemDefinitionError, UPException,
-                        UnicodeDecodeError) as err:
-                    if self.verbose:
-                        print('\n** Error in planning engine!', err)
-                    if metric == 'runtime':
-                        feedback = self.planner_timelimit
-                    elif metric == 'quality':
-                        feedback = self.crash_cost
-                '''
+                if metric == 'quality':
+                    timelimit = self.planner_timelimit - self.patience
+                else:
+                    timelimit = self.planner_timelimit
 
                 try:
-                    @concurrent.process(timeout=self.planner_timelimit)
-                    def solve(config, metric, engine,
-                              mode, pddl_problem):
-                        print('Running further\n')
-                        feedback = \
-                            gaci.run_engine_config(config,
-                                                   metric, engine,
-                                                   mode, pddl_problem)
+                    if isinstance(self.train_set, dict) and \
+                            isinstance(self.train_set[instance_p], tuple):
+                        domain = self.train_set[instance_p][1]
+                        problem = self.train_set[instance_p][0]
+                        pddl_problem = reader.parse_problem(domain, problem)
+                    else:
+                        domain_path = instance_p.rsplit('/', 1)[0]
+                        domain = f'{domain_path}/domain.pddl'
+                        pddl_problem = reader.parse_problem(f'{domain}',
+                                                            f'{instance_p}')
 
-                        return feedback
+                    if engine == 'tamer' or engine == 'pyperplan':
+                        @concurrent.process(timeout=timelimit)
+                        def solve(config, metric, engine,
+                                  mode, pddl_problem):
+                            feedback = \
+                                gaci.run_engine_config(config,
+                                                       metric, engine,
+                                                       mode, pddl_problem,
+                                                       timelimit)
 
-                    feedback = solve(config, metric, engine,
-                                     mode, pddl_problem)
-                    
+                            return feedback
+                    else:
+                        def solve(config, metric, engine,
+                                  mode, pddl_problem):
+                            feedback = \
+                                gaci.run_engine_config(config,
+                                                       metric, engine,
+                                                       mode, pddl_problem,
+                                                       timelimit)
+
+                            return feedback
+
                     try:
-                        feedback = feedback.result()
-                    except TimeoutError:
+                        if engine == 'tamer' or engine == 'pyperplan':
+                            future = solve(config, metric, engine,
+                                           mode, pddl_problem)
+                            try:
+                                feedback = future.result()
+                            except (TimeoutError, ProcessExpired) as err:
+                                print(err)
+                                feedback = timelimit
+
+                        else:
+                            with time_limit(timelimit):
+                                feedback = solve(config, metric, engine,
+                                                 mode, pddl_problem)
+
+                    except TimeoutException:
                         if metric == 'runtime':
-                            feedback = self.planner_timelimit
+                            feedback = timelimit
                         elif metric == 'quality':
                             feedback = self.crash_cost
 
+
                 except (AssertionError, NotImplementedError,
-                        UPProblemDefinitionError):
-                    print('\n** Error in planning engine!')
+                        UPProblemDefinitionError, UPException,
+                        UnicodeDecodeError) as err:
+                    print('Exception', '\n\n')
+                    if self.verbose:
+                        print('\n** Error in planning engine!', err)
                     if metric == 'runtime':
-                        feedback = self.planner_timelimit
+                        feedback = timelimit
                     elif metric == 'quality':
                         feedback = self.crash_cost
-                '''
+
+
+                if feedback == 'unsolvable':
+                    if metric == 'runtime':
+                        feedback = timelimit
+                    elif metric == 'quality':
+                        feedback = self.crash_cost
               
                 if feedback is not None:
                     # SMAC always minimizes
                     if metric == 'quality':
                         self.print_feedback(engine, instance, feedback)
-                        return -feedback
+                        return feedback
                     # Solving runtime optimization by passing
                     # runtime as result, since smac minimizes it
                     elif metric == 'runtime':
                         if engine in ('tamer', 'pyperplan'):
                             feedback = timeit.default_timer() - start
+                            if feedback > timelimit:
+                                feedback = timelimit
                             self.print_feedback(engine, instance, feedback)
                         else:
-                            feedback = feedback
+                            if feedback > timelimit:
+                                feedback = timelimit
                             self.print_feedback(engine, instance, feedback)
                         return feedback
                 else:
                     # Penalizing failed runs
                     if metric == 'runtime':
                         # Penalty is max runtime in runtime scenario
-                        feedback = self.scenario.trial_walltime_limit
+                        feedback = timelimit
                         self.print_feedback(engine, instance, feedback)
                     else:
                         # Penalty is defined by user in quality scenario
@@ -156,7 +205,8 @@ class SmacConfigurator(Configurator):
                      configuration_time=120, n_trials=400, min_budget=1,
                      max_budget=3, crash_cost=0, planner_timelimit=30,
                      n_workers=1, instances=[], instance_features=None,
-                     metric='runtime'):
+                     output_dir='smac3_output', metric='runtime',
+                     patience=10):
         """
         Set up the algorithm configuration scenario for SMAC (Sequential Model-based Algorithm Configuration).
 
@@ -178,31 +228,50 @@ class SmacConfigurator(Configurator):
         """
         if not instances:
             instances = self.train_set
+        if isinstance(instances[0], tuple):
+            train_set_dict = {}
+            clean_inst = instances
+            instances = []
+            for inst in clean_inst:
+                train_set_dict[inst[0]] = inst
+                instances.append(inst[0])
+            self.train_set = train_set_dict
+        if metric == 'runtime':
+            if crash_cost != planner_timelimit:
+                crash_cost = planner_timelimit
         self.crash_cost = crash_cost
-        self.planner_timelimit = planner_timelimit
+        self.patience = patience
+        self.metric = metric
+        if self.metric == 'quality':
+            self.planner_timelimit = planner_timelimit + patience
+        else:
+            self.planner_timelimit = planner_timelimit
         self.engine = engine
         self.gaci = gaci
-        scenario = Scenario(
-            param_space,
-            # We want to optimize for <configuration_time> seconds
-            walltime_limit=configuration_time,
-            n_trials=n_trials,  # Maximum number or algorithm runs
-            min_budget=min_budget,  # Use min <min_budget> instance
-            max_budget=max_budget,  # Use max <max_budget> instances
-            deterministic=True,  # Not stochastic algorithm
-            # Cost of algorithm crashing -> AC metric to evaluate configuration
-            crash_cost=crash_cost,  
-            # Max time for algorithm to run
-            trial_walltime_limit=planner_timelimit,  
-            use_default_config=True,  # include default config
-            n_workers=n_workers,  # Number of parallel runs
-            instances=instances,  # List of training instances
-            instance_features=instance_features  # Dict of instance features
-        )
+        self.n_workers = n_workers
+        self.scenarios = {}
+
+        for n in range(self.n_workers):
+            scenario_dict = {'configspace': param_space,
+                             'walltime_limit': configuration_time,
+                             'n_trials': n_trials,
+                             'min_budget': min_budget,
+                             'max_budget': max_budget,
+                             'deterministic': True,
+                             'crash_cost': crash_cost,  
+                             'trial_walltime_limit': planner_timelimit,  
+                             'use_default_config': True,
+                             'n_workers': 1,
+                             'instances': instances,
+                             'instance_features': instance_features}
+
+            od = output_dir + f'_{n}'
+
+            self.scenarios[n] = Scenario(**scenario_dict,
+                                         output_directory=od)
+
         if self.verbose:
             print('\nSMAC scenario is set.\n')
-
-        self.scenario = scenario
 
     def optimize(self, feedback_function=None, gray_box=False):
         """
@@ -226,15 +295,63 @@ class SmacConfigurator(Configurator):
 
             if self.verbose:
                 print('\nStarting Parameter optimization\n')
+
+            ac_dict = {}
+            self.incumbent_dict = {}
+            self.incumbent_dicts_dict = {}
+            self.runhistories = {}
+            self.costs = []
+            threads = []
+            results = [None for n in range(self.n_workers)]
+
+            def optimize(smac, results, n):
+                results[n] = smac.optimize()
+
+            import threading
+
+            for n in range(self.n_workers):
+
+                print('\n\n\n')
+                print('!!!!!!!!!!!!!!')
+                print('Running AC Nr.', n)
+                print('!!!!!!!!!!!!!!')
+                print('\n\n\n')
  
-            ac = AlgorithmConfigurationFacade(
-                self.scenario,
-                get_feedback,
-                overwrite=True)
+                ac_dict[n] = AlgorithmConfigurationFacade(
+                    self.scenarios[n],
+                    get_feedback,
+                    overwrite=True)
 
-            self.incumbent = ac.optimize()
+                threads.append(threading.Thread(target=optimize,
+                                                args=(ac_dict[n], results, n)))
 
-            self.incumbent = self.incumbent.get_dictionary()
+            for n in range(self.n_workers):
+                threads[n].start()
+
+            for n in range(self.n_workers):
+                threads[n].join()
+
+            for n in range(self.n_workers):
+                self.incumbent_dict[n] = results[n]
+                if results[n] is not None:
+                    self.incumbent_dicts_dict[n] = results[n].get_dictionary()
+                    self.runhistories[n] = ac_dict[n]._runhistory
+                    self.costs.append(
+                        self.runhistories[n].get_cost(self.incumbent_dict[n]))
+                else:
+                    self.incumbent_dicts_dict[n] = None
+                    self.runhistories[n] = None
+                    if self.metric == 'quality':
+                        self.costs.append(self.crash_cost)
+                    else:
+                        self.costs.append(self.planner_timelimit)
+
+            for n, incumbent in self.incumbent_dicts_dict.items():
+                print('Incumbent', n, incumbent, 'has cost', self.costs[n])
+
+            index_best = \
+                min(range(len(self.costs)), key=self.costs.__getitem__)
+            self.incumbent = self.incumbent_dicts_dict[index_best]
 
             if self.verbose:
                 print('\nBest Configuration found is:\n',

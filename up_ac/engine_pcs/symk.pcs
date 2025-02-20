@@ -1,30 +1,44 @@
-fast_downward_search_config {astar, eager, eager_greedy, eager_wastar, ehc, lazy, lazy_greedy, lazy_wastar} [astar] # SearchEngine
+fast_downward_search_config {astar, eager, eager_greedy, lazy_greedy, lazy_wastar} [astar] # SearchEngine
+astar_h {merge_and_shrink, landmark_cost_partitioning, blind, lmcut} [blind]
+greedy {true, false} [true]
+before_shrinking {true, false} [true]
+before_merging {true, false} [true]
+max_states [20000, 200000000] [200000]i
+threshold_before_merge {true, false} [true]
+m [1,10] [1]i
 
-# Options for SearchEngines
-evaluator {add, blind, cea, cegar, cg, ff, goalcount, hm, hmax, lmcut, const, g, pref, cpdbs, ipdb, pdb, zopdbs} [blind]
+number_h {1,2,3} [1]
+h_1 {ff, cea, cg, add} [ff]
+h_2 {ff, cea, cg, add} [cea]
+h_3 {ff, cea, cg, add} [cg]
+weight [1,10] [3]i
+w [1,10] [3]i
+cost_type {normal, one, plusone} [normal]
+preferred_1 [1,3] [1]i
+preferred_2 [1,3] [2]i
+preferred_3 [1,3] [3]i
+nr_preferred {1,2,3} [1]
 
-ehc_preferred_usage {prune_by_preferred, rank_preferred_first} [prune_by_preferred]
+# Conditional
+astar_h | fast_downward_search_config in {astar}
+greedy | fast_downward_search_config in {astar}
+before_shrinking | fast_downward_search_config in {astar}
+before_merging | fast_downward_search_config in {astar}
+max_states | fast_downward_search_config in {astar}
+threshold_before_merge | fast_downward_search_config in {astar}
+number_h | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+nr_preferred | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+h_2 | number_h in {2,3}
+h_2 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+h_3 | number_h in {3}
+h_3 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+preferred_2 | nr_preferred in {2,3}
+preferred_2 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+preferred_3 | nr_preferred in {3}
+preferred_3 | fast_downward_search_config in {eager, eager_greedy, lazy_greedy, lazy_wastar}
+w | fast_downward_search_config in {lazy_wastar}
+weight | fast_downward_search_config in {eager}
 
-open {alt, epsilon_greedy, pareto, single, tiebreaking, type_based} [alt]
-open_list_evals {add, blind, cea, cegar, cg, ff, goalcount, hm, hmax, lmcut, const, g, pref, cpdbs, ipdb, pdb, zopdbs} [blind]
+# Forbidden
+{before_shrinking=false, before_merging=false}
 
-reopen_closed {false, true} [false]
-randomize_successors {false, true} [false]
-
-cost_type {normal, one, plus_one} [normal]
-
-# Pruning Methods
-pruning {atom_centric_stubborn_sets, null, stubborn_sets_ec, stubborn_sets_simple} [null]
-atom_centric_stubborn_sets_use_sibling {false, true} [false]
-atom_selection_strategy {fast_downward, quick_skip, static_small, dynamic_small} [quick_skip] # Example: atom_centric_stubborn_sets(use_sibling_shortcut=true, atom_selection_strategy=quick_skip, verbosity=normal)
-
-# Conditional, <child name> | <parent name> in {<parent val1>, ..., <parent valK>}: child only active if parent takes specified values
-evaluator | fast_downward_search_config in {astar, eager_greedy, eager_wastar, ehc, lazy_greedy, lazy_wastar}
-ehc_preferred_usage | fast_downward_search_config in {ehc}
-reopen_closed | fast_downward_search_config in {eager, eager_wastar, lazy, lazy_greedy, lazy_wastar}
-randomize_successors | fast_downward_search_config in {lazy, lazy_greedy, lazy_wastar}
-open | fast_downward_search_config in {eager, lazy}
-open_list_evals | fast_downward_search_config in {eager, lazy}
-pruning | fast_downward_search_config in {astar, eager, eager_greedy, eager_wastar}
-atom_centric_stubborn_sets_use_sibling | pruning in {atom_centric_stubborn_sets}
-atom_selection_strategy | pruning in {atom_centric_stubborn_sets}

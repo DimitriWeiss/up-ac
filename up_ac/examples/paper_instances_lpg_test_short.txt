@@ -1,0 +1,6 @@
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/snake/p04.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/snake/domain.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/snake/p03.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/snake/domain.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/quantum-layout/p10.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/quantum-layout/domain_p10.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/quantum-layout/p01.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/quantum-layout/domain_p01.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/termes/p03.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/termes/domain.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/termes/p01.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/termes/domain.pddl')

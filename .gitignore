@@ -32,3 +32,10 @@ tests/incumbent_tamer.json
 tests/incumbent_pyperplan.json
 tests/input.cnf
 tests/status
+examples/selector
+examples/smac_output_*
+
+# Research
+examples/paper_tests
+paper_experiments
+

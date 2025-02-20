@@ -16,15 +16,13 @@ if not os.path.isfile(sys.path[0] + '/configurators.py') and \
 from up_ac.Smac_configurator import SmacConfigurator
 from up_ac.Smac_interface import SmacInterface
 
-allowed_combinations = {'quality': {'OneshotPlanner': [['lpg'], ['fast-downward'], ['enhsp'], ['symk']], 
-                                    'AnytimePlanner': [['fast-downward'], ['symk']]},
-                        'runtime': {'OneshotPlanner': [['lpg'], ['fast-downward'], ['enhsp'], ['symk'], ['tamer'], ['pyperplan'],['fmap']],
-                                    'AnytimePlanner': [['fast-downward'], ['symk']]}}
+allowed_combinations = {'quality': {'OneshotPlanner': [['lpg'], ['fast-downward'], ['enhsp'], ['symk'], ['tamer'], ['pyperplan']], 
+                                    'AnytimePlanner': [['fast-downward'], ['symk'], ['lpg'], ['enhsp']]},
+                        'runtime': {'OneshotPlanner': [['lpg'], ['fast-downward'], ['enhsp'], ['symk'], ['tamer'], ['pyperplan']]}}
 allowed_keys = allowed_combinations.keys()
 
-disallowed_combinations = {'quality': {'OneshotPlanner': [['tamer'], ['pyperplan'],['fmap']], 
-                                    'AnytimePlanner': [['lpg'], ['enhsp'], ['tamer'], ['pyperplan'],['fmap']]},
-                        'runtime': {'AnytimePlanner': [['lpg'], ['enhsp'], ['tamer'], ['pyperplan'],['fmap']]}}
+disallowed_combinations = {'quality': {'OneshotPlanner': [['fmap']], 
+                                    'AnytimePlanner': [['tamer'], ['pyperplan'], ['fmap']]}}
 disallowed_keys = disallowed_combinations.keys()
 
 

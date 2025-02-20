@@ -2,11 +2,16 @@
 from unified_planning.io import PDDLReader
 from unified_planning.exceptions import UPProblemDefinitionError
 
-from up_ac.AC_interface import *
+from AC_interface import *
 
 import json
 import timeit
 import time
+import os
+import subprocess
+import psutil
+import signal
+import multiprocessing
 
 
 class Configurator():
@@ -16,19 +21,22 @@ class Configurator():
         """Initialize generic interface."""
         self.capabilities = {'quality': {
                              'OneshotPlanner': 
-                             ['lpg', 'fast-downward', 'enhsp', 'symk'],
-                             'AnytimePlanner': ['fast-downward', 'symk']},
+                             ['lpg', 'fast-downward', 'enhsp', 'symk',
+                              'pyperplan', 'tamer'],
+                             'AnytimePlanner':
+                             ['fast-downward', 'symk', 'enhsp-any',
+                              'lpg-anytime']},
                              'runtime': {
                              'OneshotPlanner':
                              ['lpg', 'fast-downward', 'enhsp', 'symk',
-                              'tamer', 'pyperplan', 'fmap'],
-                             'AnytimePlanner': ['fast-downward', 'symk']}
+                              'tamer', 'pyperplan']}
                              }
         self.incumbent = None
         self.instance_features = {}
         self.train_set = {}
         self.test_set = {}
         self.reader = PDDLReader()
+        self.reader._env.error_used_name = False
         self.metric = None
         self.crash_cost = 0
         self.ac = None
@@ -151,6 +159,7 @@ class Configurator():
         :param evalLimit: Maximum number of evaluations (OAT), optional.
         :type evalLimit: int, optional
         """
+        self.planner_timelimit = planner_timelimit
 
         scenario = None
 
@@ -172,8 +181,93 @@ class Configurator():
 
             return self.incumbent
 
+    def get_process_by_name(self, names):
+        """
+        Finds all processes matching given names.
+
+        :param names: List of names of processes to get.
+        :type names: str
+
+        :return: Processes that match the names.
+        :rtype: list of psuitl.Process
+        """
+        matching_processes = []
+        for proc in psutil.process_iter(attrs=['pid', 'name']):
+            try:
+                if any(proc.info['name'] in names for name in names):
+                    matching_processes.append(proc)
+            except (psutil.NoSuchProcess, psutil.AccessDenied,
+                    psutil.ZombieProcess):
+                continue
+        return matching_processes
+
+    def trigger_gc_for_children(self, pid):
+        """
+        Triggers garbage collection for child Java processes.
+
+        :param pid: PID of parent Process.
+        :type names: int
+        """
+        java_gcc_processes = self.get_process_by_name(["java", "gcc", "g++"])
+        parent = psutil.Process(pid)
+        for child in parent.children(recursive=True):
+            try:
+                process_name = child.name().lower()
+                pid = child.pid
+
+                if "java" in process_name:
+                    print(f"Triggering GC for Java process PID: {pid}",
+                          flush=True)
+                    subprocess.run(["jcmd", str(pid), "GC.run"])
+
+                elif "gcc" in process_name or "g++" in process_name:
+                    print(f"Triggering GC for GCC process PID: {pid}",
+                          flush=True)
+                    # Sending SIGHUP as a best-effort attempt
+                    child.send_signal(signal.SIGHUP)
+
+            except Exception as e:
+                print(f"Error triggering GC for process PID {pid}: {e}",
+                      flush=True)
+
+        # Monitor memory usage and wait until it reduces
+        while any(proc.is_running() for proc in java_gcc_processes):
+            try:
+                while any(proc.memory_info().rss > 500 * 1024 * 1024 
+                          for proc in java_gcc_processes):
+                    print("Memory still high, waiting...")
+                    time.sleep(5)
+            except Exception as e:
+                print(e)
+                pass
+
+    def kill_process_tree(self, pid, wt):
+        """
+        Terminate/kill all child processes.
+
+        :param pid: PID of parent Process.
+        :type names: int
+        :param wt: Time to wait for process to terminate.
+        :type names: int
+        """
+        try:
+            parent = psutil.Process(pid)
+            children = parent.children(recursive=True)
+            for child in children:
+                child.terminate()
+            parent.terminate()
+
+            # Wait for termination
+            _, still_alive = psutil.wait_procs(children, timeout=wt)
+            for p in still_alive:
+                p.kill()  # Force kill if still alive
+
+            parent.wait(wt)
+        except (psutil.NoSuchProcess, psutil.TimeoutExpired) as err:
+            print(err)
+
     def evaluate(self, metric, engine, mode, incumbent, gaci,
-                 planner_timelimit=10, crash_cost=0, instances=[]):
+                 planner_timelimit=300, crash_cost=10000, instances=[]):
         """
         Evaluate performance of found configuration on training set.
 
@@ -198,87 +292,141 @@ class Configurator():
         :rtype: float
         """
         if incumbent is not None:
-            # Avoid (meaningless) pebble AssertionError on Google Colab
-            try:
-                import google.colab
-                IN_COLAB = True
-            except:
-                IN_COLAB = False
 
             if not instances:
                 instances = self.test_set
             nr_inst = len(instances)
             avg_f = 0
+
+            def solve(incumbent, metric, engine,
+                      mode, pddl_problem, conn):
+                f = \
+                    gaci.run_engine_config(incumbent,
+                                           metric, engine,
+                                           mode, pddl_problem,
+                                           timelimit=planner_timelimit)
+
+                conn.send(f)  # Send result via pipe
+                conn.close()
+
+                return f
+
             for inst in instances:
                 if metric == 'runtime':
-                    from pebble import concurrent
-                    from concurrent.futures import TimeoutError
                     start = timeit.default_timer()
 
-                instance_p = f'{inst}'
-                domain_path = instance_p.rsplit('/', 1)[0]
-                domain = f'{domain_path}/domain.pddl'
-                pddl_problem = self.reader.parse_problem(f'{domain}',
-                                                         f'{instance_p}')
-
                 try:
-                    if metric == 'runtime':
-                        if IN_COLAB:
-                            def solve(incumbent, metric, engine,
-                                      mode, pddl_problem):
-                                f = \
-                                    gaci.run_engine_config(incumbent,
-                                                           metric, engine,
-                                                           mode, pddl_problem)
+                    if isinstance(inst, tuple):
+                        instance_p = f'{inst[0]}'
+                        domain = f'{inst[1]}'
+                    else:
+                        instance_p = f'{inst}'
+                        domain_path = instance_p.rsplit('/', 1)[0]
+                        domain = f'{domain_path}/domain.pddl'
+                    pddl_problem = self.reader.parse_problem(f'{domain}',
+                                                             f'{instance_p}')
 
-                                return f
-                        else:
-                            @concurrent.process(timeout=planner_timelimit)
-                            def solve(incumbent, metric, engine,
-                                      mode, pddl_problem):
-                                f = \
-                                    gaci.run_engine_config(incumbent,
-                                                           metric, engine,
-                                                           mode, pddl_problem)
+                    print('\n\nEvaluatng instance:', instance_p)
 
-                                return f
+                    parent_conn, child_conn = multiprocessing.Pipe()
 
-                        f = solve(incumbent, metric, engine,
-                                  mode, pddl_problem)
-                        
+                    process = \
+                        multiprocessing.Process(
+                            target=solve, args=(incumbent, metric, engine,
+                                                mode, pddl_problem,
+                                                child_conn))
+                    process.start()
+                    child_conn.close()
+                    pr_start = time.time()
+                    process_pid = process.pid
+                    uproc = psutil.Process(process_pid)
+
+                    # Managing Processes and Memory, making sure system does
+                    # not crash
+                    jobid = os.getenv("SLURM_JOB_ID")
+                    if jobid is not None:
                         try:
-                            if IN_COLAB:
-                                f = f
-                            else:
-                                f = f.result()
-                        except (TimeoutError, AssertionError):
-                            f = planner_timelimit
-                    elif metric == 'quality':                    
-                        f = \
-                            gaci.run_engine_config(incumbent,
-                                                   metric, engine,
-                                                   mode, pddl_problem)
+                            mem_res = subprocess.run(
+                                ["scontrol", "show", "job", jobid],
+                                capture_output=True, text=True, check=True
+                            )
+                            for line in mem_res.stdout.split("\n"):
+                                if "mem=" in line:
+                                    if 'G' in line:
+                                        mult = 1000
+                                    else:
+                                        mult = 1
+                                    mem = line.split(',')[1]
+                                    mem = int(mem.split('=')[1][:-1]) * mult
+                                    print('Allocated Memory is:', mem,
+                                          flush=True)
+
+                        except Exception as e:
+                            print(f"Error retrieving allocated memory: {e}",
+                                  flush=True)
+                            mem = None
+                    else:
+                        mem = psutil.virtual_memory().total / (1024 * 1024)
+
+                    while (time.time() - pr_start <= planner_timelimit + 1
+                           and uproc.is_running()
+                           and uproc.status() != psutil.STATUS_ZOMBIE) or (
+                               time.time() - pr_start >= planner_timelimit):
+                        time.sleep(1)
+                        kill_times = [20, 30, 40]
+                        mem_used = uproc.memory_info().rss / (1024 * 1024)
+                        for child in uproc.children(recursive=True):
+                            mem_used += uproc.memory_info().rss / (1024 * 1024)
+                        if mem_used > 0.5 * mem:
+                            for i in range(3):
+                                try:
+                                    self.trigger_gc_for_children(process_pid)
+                                except Exception as e:
+                                    print(e)
+                                self.kill_process_tree(process_pid,
+                                                       kill_times[i])
+                            try:
+                                process.kill()
+                            except Exception as e:
+                                print(e)
+                                pass
+                            continue
+
+                    f = None
+
+                    if parent_conn.poll(1):
+                        try:
+                            f = parent_conn.recv()
+                        except Exception as e:
+                            print(e)
+
+                    process.join()
 
                 except (AssertionError, NotImplementedError,
-                        UPProblemDefinitionError):
+                        UPProblemDefinitionError) as err:
                     if self.verbose:
                         print('\n** Error in planning engine!')
+                        print(err)
                     if metric == 'runtime':
                         f = planner_timelimit
                     elif metric == 'quality':
                         f = crash_cost
 
+                print('\n')
+                print('Instance', instance_p)
+                print('Pure feedback:', f)
+
                 if metric == 'runtime':
-                    if f is None:
+                    if f is None or f == 'unsolvable':
                         f = planner_timelimit
                     elif 'measure':
                         f = timeit.default_timer() - start
                         if f > planner_timelimit:
                             f = planner_timelimit
+                if metric == 'quality' and (f is None or f == 'unsolvable'):
+                    f = crash_cost
 
                 if f is not None and self.metric == 'quality':
-                    f = -f
-                if f is not None: 
                     avg_f += f
                 else:
                     avg_f += self.crash_cost
@@ -288,20 +436,22 @@ class Configurator():
                 elif metric == 'quality':
                     if f is not None:
                         if self.verbose:
-                            print(f'\nFeedback on instance {inst}:\n\n', -f,
+                            print(f'\nFeedback on instance {inst}:\n\n', f,
                                   '\n')
                     else:
                         if self.verbose:
                             print(f'\nFeedback on instance {inst}:\n\n', None,
                                   '\n')
+
             if nr_inst != 0:
                 avg_f = avg_f / nr_inst
                 if metric == 'runtime':
                     print(f'\nAverage performance on {nr_inst} instances:',
                           avg_f, 'seconds\n')
                 if metric == 'quality':
-                    print(f'\nAverage quality performance on {nr_inst} instances:',
-                          -avg_f, '\n')
+                    print(f'''\nAverage quality performance on {nr_inst} 
+                          instances:''',
+                          avg_f, '\n')
                 return avg_f
             else:
                 print('\nPerformance could not be evaluated. No plans found.')

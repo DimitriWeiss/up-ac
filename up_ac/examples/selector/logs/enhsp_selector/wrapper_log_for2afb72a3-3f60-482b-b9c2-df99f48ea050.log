@@ -1,0 +1,40 @@
+2025-02-19 23:45:46,025 
+
+2025-02-19 23:45:46,025 Wrapper TAE start Configuration(id=UUID('2afb72a3-3f60-482b-b9c2-df99f48ea050'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'lazy_greedy', 'h_1': 'cea', 'm': 4, 'preferred_1': 1, 'astar_h': 'cg', 'before_merging': True, 'before_shrinking': True, 'greedy': False, 'max_states': 29945496, 'nr_preferred': '3', 'number_h': '2', 'threshold_before_merge': True, 'w': 8, 'weight': 4, 'h_2': 'add', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 2}, generator=<Generator.random: 2>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/depot/problem.pddl
+2025-02-19 23:45:46,042 Binding TA to core: 3
+2025-02-19 23:45:46,069 New child process 357335 
+                                python3 CPU affinity set to core: 
+                                3
+2025-02-19 23:45:49,702 Wrapper TAE end Configuration(id=UUID('2afb72a3-3f60-482b-b9c2-df99f48ea050'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'lazy_greedy', 'h_1': 'cea', 'm': 4, 'preferred_1': 1, 'astar_h': 'cg', 'before_merging': True, 'before_shrinking': True, 'greedy': False, 'max_states': 29945496, 'nr_preferred': '3', 'number_h': '2', 'threshold_before_merge': True, 'w': 8, 'weight': 4, 'h_2': 'add', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 2}, generator=<Generator.random: 2>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/depot/problem.pddl
+2025-02-19 23:45:49,710 
+
+2025-02-19 23:45:49,710 Wrapper TAE start Configuration(id=UUID('2afb72a3-3f60-482b-b9c2-df99f48ea050'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'lazy_greedy', 'h_1': 'cea', 'm': 4, 'preferred_1': 1, 'astar_h': 'cg', 'before_merging': True, 'before_shrinking': True, 'greedy': False, 'max_states': 29945496, 'nr_preferred': '3', 'number_h': '2', 'threshold_before_merge': True, 'w': 8, 'weight': 4, 'h_2': 'add', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 2}, generator=<Generator.random: 2>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl
+2025-02-19 23:45:49,723 Binding TA to core: 1
+2025-02-19 23:45:49,744 New child process 357435 
+                                python3 CPU affinity set to core: 
+                                1
+2025-02-19 23:45:53,643 Wrapper TAE end Configuration(id=UUID('2afb72a3-3f60-482b-b9c2-df99f48ea050'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'lazy_greedy', 'h_1': 'cea', 'm': 4, 'preferred_1': 1, 'astar_h': 'cg', 'before_merging': True, 'before_shrinking': True, 'greedy': False, 'max_states': 29945496, 'nr_preferred': '3', 'number_h': '2', 'threshold_before_merge': True, 'w': 8, 'weight': 4, 'h_2': 'add', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 2}, generator=<Generator.random: 2>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl
+2025-02-19 23:45:57,548 
+
+2025-02-19 23:45:57,548 Wrapper TAE start Configuration(id=UUID('9503f07c-ed13-47a7-84cf-ebacb4c70d43'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'h_1': 'ff', 'm': 1, 'preferred_1': 1, 'astar_h': 'blind', 'before_merging': True, 'before_shrinking': True, 'greedy': True, 'max_states': 200000, 'nr_preferred': '1', 'number_h': '1', 'threshold_before_merge': True, 'w': 3, 'weight': 3, 'h_2': 'cea', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 3}, generator=<Generator.default: 1>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl
+2025-02-19 23:45:57,559 Binding TA to core: 4
+2025-02-19 23:45:57,604 New child process 357525 
+                                python3 CPU affinity set to core: 
+                                4
+2025-02-19 23:46:01,375 Wrapper TAE end Configuration(id=UUID('9503f07c-ed13-47a7-84cf-ebacb4c70d43'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'h_1': 'ff', 'm': 1, 'preferred_1': 1, 'astar_h': 'blind', 'before_merging': True, 'before_shrinking': True, 'greedy': True, 'max_states': 200000, 'nr_preferred': '1', 'number_h': '1', 'threshold_before_merge': True, 'w': 3, 'weight': 3, 'h_2': 'cea', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 3}, generator=<Generator.default: 1>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl
+2025-02-19 23:46:04,237 
+
+2025-02-19 23:46:04,238 Wrapper TAE start Configuration(id=UUID('ff8942de-55ed-4bf5-8c02-ab95e361d2ad'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'h_1': 'ff', 'm': 1, 'preferred_1': 1, 'astar_h': 'blind', 'before_merging': True, 'before_shrinking': True, 'greedy': True, 'max_states': 200000, 'nr_preferred': '1', 'number_h': '1', 'threshold_before_merge': True, 'w': 3, 'weight': 3, 'h_2': 'cea', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 3}, generator=<Generator.default: 1>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl
+2025-02-19 23:46:04,252 Binding TA to core: 2
+2025-02-19 23:46:04,272 New child process 357549 
+                                python3 CPU affinity set to core: 
+                                2
+2025-02-19 23:46:06,974 Wrapper TAE end Configuration(id=UUID('ff8942de-55ed-4bf5-8c02-ab95e361d2ad'), conf={'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'h_1': 'ff', 'm': 1, 'preferred_1': 1, 'astar_h': 'blind', 'before_merging': True, 'before_shrinking': True, 'greedy': True, 'max_states': 200000, 'nr_preferred': '1', 'number_h': '1', 'threshold_before_merge': True, 'w': 3, 'weight': 3, 'h_2': 'cea', 'h_3': 'cg', 'preferred_2': 2, 'preferred_3': 3}, generator=<Generator.default: 1>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl
+2025-02-19 23:46:09,869 
+
+2025-02-19 23:46:09,870 Wrapper TAE start Configuration(id=UUID('08200f2d-7797-4ffb-a5a6-2b9ef4b9919c'), conf={'cost_type': 'one', 'fast_downward_search_config': 'astar', 'h_1': 'add', 'm': 5, 'preferred_1': 2, 'astar_h': 'ff', 'before_merging': True, 'before_shrinking': False, 'greedy': False, 'max_states': 89353749, 'threshold_before_merge': False, 'nr_preferred': '2', 'number_h': '2', 'w': 2, 'weight': 9, 'h_2': 'cg', 'h_3': 'ff', 'preferred_2': 1, 'preferred_3': 1}, generator=<Generator.smac: 5>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/depot/problem.pddl
+2025-02-19 23:46:09,887 Binding TA to core: 5
+2025-02-19 23:46:09,907 New child process 357587 
+                                python3 CPU affinity set to core: 
+                                5
+2025-02-19 23:46:12,121 Wrapper TAE end Configuration(id=UUID('08200f2d-7797-4ffb-a5a6-2b9ef4b9919c'), conf={'cost_type': 'one', 'fast_downward_search_config': 'astar', 'h_1': 'add', 'm': 5, 'preferred_1': 2, 'astar_h': 'ff', 'before_merging': True, 'before_shrinking': False, 'greedy': False, 'max_states': 89353749, 'threshold_before_merge': False, 'nr_preferred': '2', 'number_h': '2', 'w': 2, 'weight': 9, 'h_2': 'cg', 'h_3': 'ff', 'preferred_2': 1, 'preferred_3': 1}, generator=<Generator.smac: 5>), /media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/depot/problem.pddl

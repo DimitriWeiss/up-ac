@@ -1,0 +1,4 @@
+inst_name, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+/media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/miconic/problem.pddl, -0.3665013,0.5880051,6.302484e-08
+/media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/depot/problem.pddl, -0.9080642,-0.44210687,6.302486e-08
+/media/dweiss/Transcend7/AIPlan4EU/Code/Unified-Planning-Git/up-ac_110/cluster_for_paper/up-ac/up_ac/test_problems/safe_road/problem.pddl, 1.2745657,-0.14589806,6.3024856e-08

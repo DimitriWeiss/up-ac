@@ -37,6 +37,7 @@ for instance in instances:
             instance)
 
 up.shortcuts.get_environment().credits_stream = None
+crash_cost = sys.maxsize - 1
 
 if __name__ == '__main__':
     mp.freeze_support()
@@ -53,7 +54,7 @@ if __name__ == '__main__':
         SAC.set_scenario(engine[0],
                          sgaci.engine_param_spaces[engine[0]],
                          sgaci, configuration_time=60, n_trials=30,
-                         min_budget=1, max_budget=3, crash_cost=0,
+                         min_budget=1, max_budget=3, crash_cost=crash_cost,
                          planner_timelimit=15, n_workers=1,
                          instance_features=SAC.instance_features)
 

@@ -78,6 +78,21 @@ For more details on SMAC refer to `the SMAC3 GitHub <https://automl.github.io/SM
 
 .. automodule:: up_ac.Smac_interface
     :members:
+    
+    
+Selector
+----
+
+Selector is an ensemble-based automated algorithm configurator. The current implementation includes functionalities and models from CPPL, GGA and SMAC.
+
+
+For more details on Selector refer to `the Selector GitHub <https://github.com/dotbielefeld/selector>`_.
+
+.. automodule:: up_ac.Selector_configurator
+    :members:    
+
+.. automodule:: up_ac.Selector_interface
+    :members:
    
 
 .. _genFunc:

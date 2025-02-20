@@ -27,6 +27,7 @@ metrics = ['quality', 'runtime']
 # initialize generic Algorithm Configuration interface
 ogaci = OATInterface()
 ogaci.read_engine_pcs(engine, f'{path}/engine_pcs')
+crash_cost = sys.maxsize - 1
 
 if __name__ == '__main__':
 
@@ -39,7 +40,7 @@ if __name__ == '__main__':
         OAC.set_scenario(engine[0],
                          ogaci.engine_param_spaces[engine[0]], ogaci,
                          configuration_time=30, n_trials=30,
-                         crash_cost=0, planner_timelimit=15, n_workers=3,
+                         crash_cost=crash_cost, planner_timelimit=15, n_workers=3,
                          instance_features=None, popSize=5, metric=metric,
                          evalLimit=1)
         OAC_fb_func = OAC.get_feedback_function(ogaci, engine[0],

@@ -1,0 +1,5 @@
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2023-dataset-main/opt/folding/p10.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2023-dataset-main/opt/folding/domain.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/organic-synthesis/p19.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/organic-synthesis/domain-p19.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/organic-synthesis/p20.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2018-classical-domains-89741bb4cdd0/opt/organic-synthesis/domain-p20.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2023-dataset-main/opt/folding/p01.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2023-dataset-main/opt/folding/domain.pddl')
+('/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2023-dataset-main/opt/folding/p02.pddl', '/media/dweiss/Transcend7/AIPlan4EU/Instances/ipc2023-dataset-main/opt/folding/domain.pddl')

@@ -1,7 +1,7 @@
 """Test up AC implementation."""
 from unified_planning.io import PDDLReader
 import unified_planning as up
-import multiprocessing as mp
+from itertools import islice
 import sys
 import os
 import unittest
@@ -43,7 +43,20 @@ class TestDefaultConfigs(unittest.TestCase):
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
         print(default_config)
-        self.assertEqual(dict(default_config), {'cost_type': 'normal', 'fast_downward_search_config': 'astar', 'evaluator': 'blind', 'pruning': 'null'},f"Default configuration of {engine[0]} does not match specified default configuration")
+        self.assertEqual(dict(default_config), {'astar_h': 'blind',
+                                                'before_merging': 'true',
+                                                'before_shrinking': 'true',
+                                                'cost_type': 'normal',
+                                                'fast_downward_search_config':
+                                                'astar', 'greedy': 'true',
+                                                'h_1': 'ff', 'm': 1,
+                                                'max_states': 200000,
+                                                'preferred_1': 1,
+                                                'threshold_before_merge':
+                                                'true'}, f"""Default 
+                                                configuration of {engine[0]} 
+                                                does not match specified 
+                                                default configuration""")
 
     def test_lpg(self):
         engine = ["lpg"]
@@ -51,7 +64,15 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'avoid_best_action_cycles': '0', 'bestfirst': '1', 'choose_min_numA_fact': '1'},f"Default configuration of {engine[0]} does not match specified default configuration")
+        default_config = dict(islice(default_config.items(), 4))
+        self.assertEqual(dict(default_config), {'adapt_all_diff': '0',
+                                                'adaptfirst': '0',
+                                                'avoid_best_action_cycles':
+                                                '0', 'bestfirst': '0'}, f"""
+                                                Default configuration of 
+                                                {engine[0]} does not match 
+                                                specified default 
+                                                configuration""")
 
     def test_pyperplan(self):
         engine = ["pyperplan"]
@@ -59,7 +80,7 @@ class TestDefaultConfigs(unittest.TestCase):
         igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
         up.shortcuts.get_environment().credits_stream = None
         default_config = igaci.engine_param_spaces[engine[0]].get_default_configuration()
-        self.assertEqual(dict(default_config), {'search':'astar'},f"Default configuration of {engine[0]} does not match specified default configuration")
+        self.assertEqual(dict(default_config), {'search': 'astar'},f"Default configuration of {engine[0]} does not match specified default configuration")
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,6 +1,6 @@
 """Functionalities for managing and calling configurators."""
-from up_ac.AC_interface import *
-from up_ac.configurators import Configurator
+from AC_interface import *
+from configurators import Configurator
 
 import timeit
 import os
@@ -10,9 +10,27 @@ from queue import Queue
 import subprocess
 import dill 
 import shutil
-from unified_planning.exceptions import UPProblemDefinitionError
-from pebble import concurrent
-from concurrent.futures import TimeoutError
+from unified_planning.exceptions import UPProblemDefinitionError, UPException
+
+import signal
+from contextlib import contextmanager
+from threading import Timer
+
+
+class TimeoutException(Exception):
+    pass
+
+
+@contextmanager
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException("Timed out!")
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
 
 
 class OATConfigurator(Configurator):
@@ -39,6 +57,25 @@ class OATConfigurator(Configurator):
                     config[param_name] = line[1].replace('\n', '')      
                 if 'according' in line:
                     read_param = True
+                    
+        return config
+
+    def write_OAT_generation_status(self):
+
+        path = self.scenario['path_to_OAT']
+        config = {}
+        with open(f'{path}tunerLog.txt', 'r') as f:
+            for line in f:
+                line = line.split(' ')
+                for i, l in enumerate(line):
+                    line[i] = l.replace(' ', '')
+                if 'Finished' in line:
+                    if int(line[2]) != int(line[4]):
+                        print('OAT stopped at configuration_time!')
+                        print('Best configuration was at generation',
+                              line[2], '/', line[4])
+                    else:
+                        print('OAT finished the AC run!')
                     
         return config
 
@@ -95,10 +132,7 @@ class OATConfigurator(Configurator):
                 
                 start = timeit.default_timer()
                 instance_p = f'{instance}'
-                domain_path = instance_p.rsplit('/', 1)[0]
-                domain = f'{domain_path}/domain.pddl'
-                pddl_problem = self.reader.parse_problem(f'{domain}',
-                                                         f'{instance_p}')
+
                 # gray box in OAT only works with runtime scenarios
                 if gray_box:
                     def planner_thread(gb_out, problem, res,
@@ -123,17 +157,23 @@ class OATConfigurator(Configurator):
                     while thread.is_alive():
                         try:
                             output = q.get(False)
-                        except:
+                        except Exception as e:
+                            print(e)
                             output = None
                         if output is not None and len(output) not in (0, 1):
                             if self.verbose:
-                                print('gray box:', output)
+                                print('Gray box output:', output)
                         if not res.empty():
                             thread.join()
 
                     feedback = res.get()
 
                 else:
+                    if metric == 'quality':
+                        timelimit = self.planner_timelimit - self.patience
+                    else:
+                        timelimit = self.planner_timelimit
+                    '''
                     feedback = \
                         gaci.run_engine_config(config,
                                                metric,
@@ -162,40 +202,69 @@ class OATConfigurator(Configurator):
                                 feedback = self.planner_timelimit
                             elif metric == 'quality':
                                 feedback = self.crash_cost
+                    '''
+                    try:
+
+                        if ',' in instance_p:
+                            inst_tuple = instance_p.split(',')
+                            domain = inst_tuple[1][2:-2]
+                            instance_p = inst_tuple[0][2:-1]
+                            pddl_problem = \
+                                self.reader.parse_problem(f'{domain}',
+                                                          f'{instance_p}')
+                        else:
+                            domain_path = instance_p.rsplit('/', 1)[0]
+                            domain = f'{domain_path}/domain.pddl'
+                            pddl_problem = self.reader.parse_problem(f'{domain}',
+                                                                     f'{instance_p}')
+
+                        def solve(config, metric, engine,
+                                  mode, pddl_problem):
+                            feedback = \
+                                gaci.run_engine_config(config,
+                                                       metric, engine,
+                                                       mode, pddl_problem,
+                                                       timelimit)
+
+                            return feedback
+
+                        try:
+                            with time_limit(timelimit):
+                                feedback = solve(config, metric, engine,
+                                                 mode, pddl_problem)
+
+                        except TimeoutException:  # TimeoutError:
+                            if metric == 'runtime':
+                                feedback = timelimit
+                            elif metric == 'quality':
+                                feedback = self.crash_cost
 
                     except (AssertionError, NotImplementedError,
-                            UPProblemDefinitionError):
+                            UPProblemDefinitionError, UPException,
+                            UnicodeDecodeError) as err:
                         if self.verbose:
-                            print('\n** Error in planning engine!')
-                        if metric == 'runtime':
-                            feedback = self.planner_timelimit
-                        elif metric == 'quality':
-                            feedback = self.crash_cost
+                            print('\n** Error in planning engine!', err)
+                        sys.exit('Error.')
 
-                if feedback is not None:
+                if feedback == 'unsolvable':
+                    if metric == 'runtime':
+                        sys.exit('Bad config.')
+                    elif metric == 'quality':
+                        feedback = self.crash_cost
+                    return feedback
+
+                elif feedback is not None:
                     if metric == 'quality':
                         self.print_feedback(engine, instance_p, feedback)
-                        return -feedback
+                        return feedback
                     elif metric == 'runtime':
                         if engine in ('tamer', 'pyperplan'):
                             feedback = timeit.default_timer() - start
-                            self.print_feedback(engine, instance_p, feedback)
-                        else:
-                            feedback = feedback
-                            self.print_feedback(engine, instance_p, feedback)
+                        self.print_feedback(engine, instance_p, feedback)
                         return feedback
-                else:
-                    # Penalizing failed runs
-                    if metric == 'runtime':
-                        # Penalty is max runtime in runtime scenario
-                        feedback = self.scenario['timelimit']
-                        self.print_feedback(engine, instance_p, feedback)
-                    else:
-                        # Penalty is defined by user in quality scenario
-                        feedback = self.crash_cost
-                        self.print_feedback(engine, instance_p, feedback)
 
-                    return feedback
+                else:
+                    sys.exit('Feedback is None.')
 
             path_to_OAT = 'path_to_OAT'
 
@@ -208,16 +277,17 @@ class OATConfigurator(Configurator):
 
             return planner_feedback
         else:
-            if self.verbose:
-                print(f'Algorithm Configuration for {metric} of {engine} in' + \
-                      ' {mode} is not supported.')
+            print(f'Algorithm Configuration for {metric} of {engine} in' + \
+                  ' {mode} is not supported.')
             return None
 
     def set_scenario(self, engine, param_space, gaci,
                      configuration_time=120, n_trials=400, min_budget=1,
                      max_budget=3, crash_cost=0, planner_timelimit=30,
                      n_workers=1, instances=[], instance_features=None,
-                     metric='runtime', popSize=128, evalLimit=2147483647):
+                     metric='runtime', popSize=128, evlaLimit=2147483647,
+                     tourn_size=8, winner_percent=0.125, racing=False,
+                     numGens=None, goalGen=None, patience=10):
         """
         Set up algorithm configuration scenario.
 
@@ -237,10 +307,12 @@ class OATConfigurator(Configurator):
         :param int popSize: Population size of configs per generation (OAT).
         :param int evalLimit: Maximum number of evaluations (OAT).
         """
-
-        if not instances:
-            instances = self.train_set
         self.crash_cost = crash_cost
+        self.patience = patience
+        if metric == 'quality':
+            self.planner_timelimit = planner_timelimit + patience
+        else:
+            self.planner_timelimit = planner_timelimit
 
         param_file = gaci.get_ps_oat(param_space)
 
@@ -250,23 +322,42 @@ class OATConfigurator(Configurator):
         path += 'up_ac'
 
         path_to_xml = f'{path}/OAT/{engine}parameterTree.xml'
-
         oat_dir = f'{path}/OAT/'
 
         with open(path_to_xml, 'w') as xml:
             xml.write(param_file)
 
         inst_dir = f'{path}/OAT/{engine}'
-
         if os.path.isdir(inst_dir):
             shutil.rmtree(inst_dir, ignore_errors=True)
 
         os.mkdir(inst_dir)
         file_name = 0
-        for inst in instances:
-            with open(f'{inst_dir}/{file_name}.txt', 'w') as f:
-                f.write(f'{inst}')
-            file_name += 1
+        if not instances:
+            if isinstance(self.train_set[0], tuple):
+                instances = []
+                for ts in self.train_set:
+                    instances.append(str(ts))
+
+                for inst in instances:
+                    with open(f'{inst_dir}/{file_name}.txt', 'w') as f:
+                        f.write(f'{inst}')
+                    file_name += 1
+
+            else:
+                for inst in instances:
+                    with open(f'{inst_dir}/{file_name}.txt', 'w') as f:
+                        f.write(f'{inst}')
+                    file_name += 1
+
+        if numGens is None:
+            numGens = int(((configuration_time / planner_timelimit) / 2) * 0.85)
+            print('Number generations to execute set to:', numGens)
+            if goalGen is None:
+                goalGen = int(numGens * 0.8)
+                print('First generation to run on max_budget instances set to:', goalGen)
+        elif goalGen is None:
+            goalGen = int(numGens * 0.7)
 
         scenario = dict(
             xml=path_to_xml,
@@ -279,7 +370,12 @@ class OATConfigurator(Configurator):
             instance_dir=inst_dir,
             path_to_OAT=oat_dir,
             popSize=popSize,
-            evalLimit=evalLimit
+            evlaLimit=evlaLimit,
+            tourn_size=tourn_size,
+            winner_percent=winner_percent,
+            racing=racing,
+            numGens=numGens,
+            goalGen=goalGen
         )
 
         self.scenario = scenario
@@ -300,44 +396,63 @@ class OATConfigurator(Configurator):
                 print('\nStarting Parameter optimization\n')
 
             if self.scenario['metric'] == 'quality':
-                tunefor = ' --byValue '
+                tunefor = ' --byValue --ascending=true '
             elif self.scenario['metric'] == 'runtime':
-                tunefor = ' --enableRacing=true '
+                if self.scenario['racing']:
+                    tunefor = ' --enableRacing=true '
+                else:
+                    tunefor = ' --enableRacing=false '
             
             n_workers = self.scenario['n_workers']
             path_to_OAT = self.scenario['path_to_OAT']
             param_space = self.scenario['xml']
             instance_folder = self.scenario['instance_dir']
-            planner_timelimit = self.scenario['timelimit']
+            self.planner_timelimit = self.scenario['timelimit']
             min_budget = self.scenario['start_gen']
             max_budget = self.scenario['end_gen']
-            evalLimit = self.scenario['evalLimit']
+            evalLimit = self.scenario['evlaLimit']
             popSize = self.scenario['popSize']
+            tourn_size = self.scenario['tourn_size']
+            winner_percent = self.scenario['winner_percent']
+            numGens = self.scenario['numGens']
+            goalGen = self.scenario['goalGen']
 
-            p = subprocess.Popen(['./Optano.Algorithm.Tuner.Application' +
-                                  ' --master' +
-                                  f' --maxParallelEvaluations={n_workers} ' + 
-                                  '--basicCommand=\"python3 ' + 
-                                  f'{feedback_function} {{instance}} ' + 
-                                  '{{arguments}}\"' + 
-                                  f' --parameterTree={param_space} ' + 
-                                  '--trainingInstanceFolder' +
-                                  f'=\"{instance_folder}\" ' + 
-                                  f'--cpuTimeout={planner_timelimit}' + 
-                                  f'{tunefor}' + 
-                                  f'--numGens={max_budget} ' + 
-                                  f'--goalGen={min_budget} ' +
-                                  f'--instanceNumbers={min_budget}:' +
-                                  f'{max_budget} ' +
-                                  f'--evaluationLimit={evalLimit} ' +
-                                  f'--popSize={popSize}'],
-                                 stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                                 cwd=f'{path_to_OAT[:-1]}', shell=True)
+            try:
+                p = subprocess.Popen(['./Optano.Algorithm.Tuner.Application' +
+                                      ' --master' +
+                                      f' --maxParallelEvaluations={n_workers} ' +
+                                      '--basicCommand=\"python3 ' +
+                                      f'{feedback_function} {{instance}} ' +
+                                      '{{arguments}}\"' +
+                                      f' --parameterTree={param_space} ' +
+                                      '--trainingInstanceFolder' +
+                                      f'=\"{instance_folder}\" ' +
+                                      f'--cpuTimeout={self.planner_timelimit}' +
+                                      f'{tunefor}' +
+                                      f'--numGens={numGens} ' +
+                                      f'--goalGen={goalGen} ' +
+                                      f'--instanceNumbers={min_budget}:' +
+                                      f'{max_budget} ' +
+                                      f'--evaluationLimit={evalLimit} ' +
+                                      f'--popSize={popSize} ' +
+                                      f'--miniTournamentSize={tourn_size} ' +
+                                      f'--winnerPercentage={winner_percent}'],
+                                     stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+                                     cwd=f'{path_to_OAT[:-1]}', shell=True)
 
-            while p.poll() is None:
-                line = p.stdout.readline()
-                if self.verbose:
-                    print(line.decode('utf-8'))
+                timer = Timer(self.scenario['wallclock'], p.kill)
+
+                timer.start()
+
+                while p.poll() is None:
+                    line = p.stdout.readline()
+                    if self.verbose:
+                        print(line.decode('utf-8'))
+
+            finally:
+                timer.cancel()
+
+            self.write_OAT_generation_status()
 
             self.incumbent = self.get_OAT_incumbent()
 

@@ -1,13 +1,32 @@
 """Functionalities for managing and calling configurators."""
 from irace import irace
 from unified_planning.exceptions import UPProblemDefinitionError, UPException
-from pebble import concurrent
-from concurrent.futures import TimeoutError
 
-from up_ac.AC_interface import *
-from up_ac.configurators import Configurator
+from AC_interface import *
+from configurators import Configurator
 
 import timeit
+import signal
+from contextlib import contextmanager
+from pebble import concurrent
+from pebble.common import ProcessExpired
+from concurrent.futures import TimeoutError
+
+
+class TimeoutException(Exception):
+    pass
+
+
+@contextmanager
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException("Timed out!")
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
 
 
 class IraceConfigurator(Configurator):
@@ -42,14 +61,38 @@ class IraceConfigurator(Configurator):
             self.metric = metric
 
             def planner_feedback(experiment, scenario):
+
+                if metric == 'quality':
+                    timelimit = self.planner_timelimit - self.patience
+                else:
+                    timelimit = self.planner_timelimit
+
                 start = timeit.default_timer()
                 instance_p = \
                     self.scenario['instances'][experiment['id.instance'] - 1]
-                domain_path = instance_p.rsplit('/', 1)[0]
-                domain = f'{domain_path}/domain.pddl'
-                pddl_problem = self.reader.parse_problem(f'{domain}',
-                                                         f'{instance_p}')
-                config = dict(experiment['configuration'])
+                try:
+                    if ',' in instance_p:
+                        instance_p = eval(instance_p)
+                        pddl_problem = \
+                            self.reader.parse_problem(f'{instance_p[1]}',
+                                                      f'{instance_p[0]}')
+                    else:
+                        domain_path = instance_p.rsplit('/', 1)[0]
+                        domain = f'{domain_path}/domain.pddl'
+                        pddl_problem = self.reader.parse_problem(f'{domain}',
+                                                                 f'{instance_p}')
+                    config = dict(experiment['configuration'])
+
+                except UPProblemDefinitionError as e:
+                    print(e)
+                    print('UPProblemDefinitionError for instance', instance_p)
+                    if metric == 'runtime':
+                        feedback = timelimit * 2
+                        feedback = {'cost': feedback, 'time': feedback}
+                    else:
+                        feedback = self.crash_cost
+                        feedback = {'cost': feedback, 'time': timelimit * 2}
+                    return feedback
 
                 '''
                 feedback = \
@@ -59,27 +102,89 @@ class IraceConfigurator(Configurator):
                                            mode,
                                            pddl_problem)
                 '''
+                
                 try:
-                    @concurrent.process(timeout=self.planner_timelimit)
-                    def solve(config, metric, engine,
-                              mode, pddl_problem):
-                        feedback = \
-                            gaci.run_engine_config(config,
-                                                   metric, engine,
-                                                   mode, pddl_problem)
+                    if engine == 'tamer' or engine == 'pyperplan':
+                        @concurrent.process(timeout=timelimit)
+                        def solve(config, metric, engine,
+                                  mode, pddl_problem):
+                            feedback = \
+                                gaci.run_engine_config(config,
+                                                       metric, engine,
+                                                       mode, pddl_problem,
+                                                       timelimit)
+                            print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&', feedback)
 
-                        return feedback
+                            return feedback
+                    else:
+                        def solve(config, metric, engine,
+                                  mode, pddl_problem):
+                            feedback = \
+                                gaci.run_engine_config(config,
+                                                       metric, engine,
+                                                       mode, pddl_problem,
+                                                       timelimit)
 
-                    feedback = solve(config, metric, engine,
-                                     mode, pddl_problem)
-                    
+                            print('feedback in solve', feedback)
+
+                            return feedback
+
+                    #feedback = solve(config, metric, engine,
+                    #                         mode, pddl_problem)
+
                     try:
-                        feedback = feedback.result()
-                    except TimeoutError:
+                        if engine == 'tamer' or engine == 'pyperplan':
+                            future = solve(config, metric, engine,
+                                           mode, pddl_problem)
+                            if metric == 'runtime':
+                                penalty = timelimit
+                            elif metric == 'quality':
+                                penalty = self.crash_cost
+                            try:
+                                feedback = future.result()
+                            except (TimeoutError, ProcessExpired) as err:
+                                print(err)
+                                feedback = penalty
+                            except Exception as e:
+                                print('Exception in planner feedback function:', e)
+                                feedback = penalty
+                            print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+                            print('Tamer/Pyperplan feedback:')
+                            print(feedback)
+                            print('On instance:')
+                            print(instance_p)
+                            print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+                        else:
+                            with time_limit(timelimit):
+                                feedback = solve(config, metric, engine,
+                                                 mode, pddl_problem)
+
+                        '''
+                        try:
+                            feedback = \
+                                func_timeout.func_timeout(
+                                    self.planner_timelimit, solve,
+                                    args=[
+                                        config, metric, engine,
+                                        mode, pddl_problem])
+                        except func_timeout.FunctionTimedOut:
+                            if metric == 'runtime':
+                                feedback = self.planner_timelimit
+                            elif metric == 'quality':
+                                feedback = self.crash_cost
+                        '''
+                    
+                    #try:
+                    #    feedback = feedback.result()
+                    except TimeoutException: #TimeoutError:
                         if metric == 'runtime':
-                            feedback = self.planner_timelimit
+                            feedback = timelimit
                         elif metric == 'quality':
                             feedback = self.crash_cost
+
+                    print(config)
+                    print('problem.name', pddl_problem.name)
+                    print('feedback in planner_feedback', feedback)
 
                 except (AssertionError, NotImplementedError,
                         UPProblemDefinitionError, UPException,
@@ -87,40 +192,53 @@ class IraceConfigurator(Configurator):
                     if self.verbose:
                         print('\n** Error in planning engine!', err)
                     if metric == 'runtime':
-                        feedback = self.planner_timelimit
+                        feedback = timelimit
                     elif metric == 'quality':
                         feedback = self.crash_cost
 
-                if feedback is not None:
+                if feedback == 'unsolvable':
+                    print('\n Unsolvable feedback:', feedback, '\n')
+                    return {'cost': (self.crash_cost), 'time': timelimit}
+
+                elif feedback is not None:
                     if metric == 'quality':
                         self.print_feedback(engine, instance_p, feedback)
                         runtime = timeit.default_timer() - start
-                        feedback = {'cost': -feedback, 'time': runtime}
+                        feedback = {'cost': feedback, 'time': runtime}
+                        print('Qualitry Feedback:', feedback)
                         return feedback
                     elif metric == 'runtime':
-                        if engine in ('tamer', 'pyperplan'):
+                        if engine in ('tamer', 'pyperplan') and feedback == 'measure':
                             feedback = timeit.default_timer() - start
-                            self.print_feedback(engine, instance_p, feedback)
-                            feedback = {'cost': feedback, 'time': feedback}
-                        else:
-                            feedback = feedback
-                            self.print_feedback(engine, instance_p, feedback)
-                            feedback = {'cost': feedback, 'time': feedback}
+                        self.print_feedback(engine, instance_p, feedback)
+                        feedback = {'cost': feedback, 'time': feedback}
+                        # else:
+                        #     feedback = feedback
+                        #     self.print_feedback(engine, instance_p, feedback)
+                        #     feedback = {'cost': feedback, 'time': feedback}
                         return feedback
                 else:
-                    # Penalizing failed runs
+                    # Penalizing failed runs and simulating timeout
+                    # now = timeit.default_timer() - start
+                    # while now < timelimit:
+                    #    time.sleep(1)
+                    #    now = timeit.default_timer() - start
                     if metric == 'runtime':
                         # Penalty is max runtime in runtime scenario
-                        feedback = self.scenario['boundMax']
+                        feedback = timelimit * 2
                         self.print_feedback(engine, instance_p, feedback)
                         feedback = {'cost': feedback, 'time': feedback}
                     else:
                         # Penalty is defined by user in quality scenario
                         feedback = self.crash_cost
                         self.print_feedback(engine, instance_p, feedback)
-                        feedback = {'cost': feedback, 'time': feedback}
-
+                        feedback = {'cost': feedback, 'time': timelimit * 2}
                     return feedback
+
+            #if engine == 'tamer':
+            #    from pebble import concurrent
+            #    return concurrent.process(planner_feedback, timeout=self.planner_timelimit, daemon=False)
+            #else:
 
             return planner_feedback
         else:
@@ -133,7 +251,7 @@ class IraceConfigurator(Configurator):
                      configuration_time=120,
                      n_trials=400, min_budget=1, max_budget=3, crash_cost=0,
                      planner_timelimit=30, n_workers=1, instances=[],
-                     instance_features=None, metric='runtime'):
+                     instance_features=None, metric='runtime', patience=10):
         """
         Set up the algorithm configuration scenario.
 
@@ -167,17 +285,26 @@ class IraceConfigurator(Configurator):
         :raises ValueError: If the provided metric is not supported.
         """
         if not instances:
-            instances = self.train_set
+            print('self.train_set', self.train_set)
+            if isinstance(self.train_set[0], tuple):
+                instances = []
+                for ts in self.train_set:
+                    instances.append(str(ts))
+            else:
+                instances = self.train_set
         self.crash_cost = crash_cost
-        self.planner_timelimit = planner_timelimit
+        self.patience = patience
+        
         default_conf, forbiddens = gaci.get_ps_irace(param_space)
 
         if metric == 'quality':
             test_type = 'friedman'
             capping = False
+            self.planner_timelimit = planner_timelimit + patience
         elif metric == 'runtime':
             test_type = 't-test'
             capping = True
+            self.planner_timelimit = planner_timelimit
         # https://mlopez-ibanez.github.io/irace/reference/defaultScenario.html
         if forbiddens:
             scenario = dict(
@@ -193,11 +320,11 @@ class IraceConfigurator(Configurator):
                 forbiddenFile="forbidden.txt",
                 logFile="",
                 initConfigurations=default_conf,
-                nbConfigurations=8,
+                # nbConfigurations=8,  # we let Irace decide
                 deterministic=True,
                 testType=test_type,
                 capping=capping,
-                boundMax=planner_timelimit,
+                boundMax=self.planner_timelimit,
                 firstTest=min_budget
             )
         else:
@@ -213,11 +340,11 @@ class IraceConfigurator(Configurator):
                 parallel=n_workers, 
                 logFile="",
                 initConfigurations=default_conf,
-                nbConfigurations=8,
+                # nbConfigurations=8,  # we let Irace decide
                 deterministic=True,
                 testType=test_type,
                 capping=capping,
-                boundMax=planner_timelimit,
+                boundMax=self.planner_timelimit,
                 firstTest=min_budget
             )
 

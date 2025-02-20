@@ -1,0 +1,63 @@
+ENHSP:
+
+supported_kind.set_problem_class('ACTION_BASED')
+        supported_kind.set_problem_class('ACTION_BASED')
+        supported_kind.set_typing('FLAT_TYPING')
+        supported_kind.set_typing('HIERARCHICAL_TYPING')
+        supported_kind.set_fluents_type("INT_FLUENTS")
+        supported_kind.set_fluents_type("REAL_FLUENTS")
+        supported_kind.set_conditions_kind('NEGATIVE_CONDITIONS')
+        supported_kind.set_conditions_kind('DISJUNCTIVE_CONDITIONS')
+        supported_kind.set_conditions_kind('EXISTENTIAL_CONDITIONS')
+        supported_kind.set_conditions_kind('UNIVERSAL_CONDITIONS')
+        supported_kind.set_conditions_kind('EQUALITIES')
+        supported_kind.set_problem_type('SIMPLE_NUMERIC_PLANNING')
+        supported_kind.set_problem_type('GENERAL_NUMERIC_PLANNING')
+        supported_kind.set_effects_kind('INCREASE_EFFECTS')
+        supported_kind.set_effects_kind('DECREASE_EFFECTS')
+        supported_kind.set_effects_kind('FORALL_EFFECTS')
+        supported_kind.set_effects_kind('CONDITIONAL_EFFECTS')
+        supported_kind.set_effects_kind('STATIC_FLUENTS_IN_BOOLEAN_ASSIGNMENTS')
+        supported_kind.set_effects_kind('STATIC_FLUENTS_IN_NUMERIC_ASSIGNMENTS')
+        supported_kind.set_effects_kind('FLUENTS_IN_BOOLEAN_ASSIGNMENTS')
+        supported_kind.set_effects_kind('FLUENTS_IN_NUMERIC_ASSIGNMENTS')
+        supported_kind.set_quality_metrics("ACTIONS_COST")
+        supported_kind.set_quality_metrics("PLAN_LENGTH")
+        supported_kind.set_quality_metrics("FINAL_VALUE")
+        supported_kind.set_actions_cost_kind("STATIC_FLUENTS_IN_ACTIONS_COST")
+        supported_kind.set_actions_cost_kind("FLUENTS_IN_ACTIONS_COST")
+        supported_kind.set_actions_cost_kind("INT_NUMBERS_IN_ACTIONS_COST")
+        supported_kind.set_actions_cost_kind("REAL_NUMBERS_IN_ACTIONS_COST")
+
+
+
+Instance Sets:
+
+Barman
+CaveDiving
+Childsnack
+CityCar
+Floortile
+GED
+Hiking
+Maintenance
+Openstacks
+Parking
+Tetris
+Thoughtful
+Transport
+Visitall
+Agricola
+Data-network
+Nurikabe
+Organic-synthesis
+Organic-synthesis-split
+Snake
+Spider
+Termes
+Folding
+Labyrinth
+Quantum-layout
+Recharging-robots
+Ricochet-robots
+Slitherlink

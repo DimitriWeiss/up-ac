@@ -28,6 +28,7 @@ igaci = IraceInterface()
 igaci.read_engine_pcs(engine, f'{path}/engine_pcs')
 
 up.shortcuts.get_environment().credits_stream = None
+crash_cost = sys.maxsize - 1
 
 if __name__ == '__main__':
 
@@ -41,7 +42,7 @@ if __name__ == '__main__':
         IAC.set_scenario(engine[0],
                          igaci.engine_param_spaces[engine[0]], igaci,
                          configuration_time=300, n_trials=30,
-                         crash_cost=0, min_budget=2,
+                         crash_cost=crash_cost, min_budget=2,
                          planner_timelimit=5, n_workers=3,
                          instance_features=None)
 
