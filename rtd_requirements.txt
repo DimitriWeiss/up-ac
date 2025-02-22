@@ -1,5 +1,4 @@
 -r requirements.txt
-selector-ac==0.1.0.4
 irace @ git+https://github.com/DimitriWeiss/up-iracepy@main
 mock
 sphinx-rtd-theme==1.3.0
