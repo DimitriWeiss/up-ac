@@ -3,10 +3,7 @@ cffi==1.16.0
 click==8.1.4
 cloudpickle==2.2.1
 ConfigSpace==0.7.1
-dask==2023.5.0
-dask-jobqueue==0.8.2
 dill==0.3.7
-distributed==2023.5.0
 emcee==3.1.4
 exceptiongroup==1.1.2
 fsspec==2023.6.0
