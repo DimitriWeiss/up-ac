@@ -73,8 +73,12 @@ jobs:
 
     - uses: r-lib/actions/setup-r-dependencies@v2
       if: ${{ matrix.r-package-source == 'github::MLopez-Ibanez/irace' }}
+      #with:
+      #  packages: remotes
+      #  pak-version: devel
       with:
-        packages: remotes
+        packages: ${{ matrix.r-package-source }}
+        dependencies: '"hard"'
         pak-version: devel
 
     - name: Install github::MLopez-Ibanez/irace
