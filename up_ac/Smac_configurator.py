@@ -16,6 +16,9 @@ from contextlib import contextmanager
 from pebble import concurrent
 from pebble.common import ProcessExpired
 
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 # We do this only to be able to set the SMAC output dir!
 AlgorithmConfigurationFacade = patch_daskrunner(AlgorithmConfigurationFacade)
 

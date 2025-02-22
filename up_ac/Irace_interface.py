@@ -1,6 +1,8 @@
 """Irace algorithm configuration interface for unified planning."""
 import pandas as pd
 import random
+import sys
+import os
 import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
 
@@ -17,6 +19,9 @@ from ConfigSpace.conditions import (
     AndConjunction,
     EqualsCondition,
 )
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class IraceInterface(GenericACInterface):

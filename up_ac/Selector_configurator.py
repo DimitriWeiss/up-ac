@@ -13,6 +13,9 @@ from configurators import Configurator
 import signal
 from contextlib import contextmanager
 
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 
 class TimeoutException(Exception):
     pass

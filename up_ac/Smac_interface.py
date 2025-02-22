@@ -2,6 +2,11 @@
 from AC_interface import GenericACInterface
 from utils.pcs_transform import transform_pcs
 import random
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class SmacInterface(GenericACInterface):

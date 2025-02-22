@@ -8,10 +8,14 @@ import json
 import timeit
 import time
 import os
+import sys
 import subprocess
 import psutil
 import signal
 import multiprocessing
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class Configurator():

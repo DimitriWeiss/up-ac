@@ -22,6 +22,9 @@ if not os.path.isfile(sys.path[0] + '/configurators.py') and \
     sys.path.append(sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac/up_ac')
     sys.path.append(sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac/utils')
 
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from utils.ac_feedback import qaul_feedback, runtime_feedback
 from utils.patches import patch_pcs
 from utils.timeout import linux_timeout
