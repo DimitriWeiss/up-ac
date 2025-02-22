@@ -1,6 +1,5 @@
 antlr4-python3-runtime==4.7.2
 cffi==1.16.0
-click==8.1.4
 cloudpickle==2.2.1
 ConfigSpace==0.7.1
 dill==0.3.7
