@@ -36,7 +36,7 @@ class OATInterface(GenericACInterface):
         """Initialize OAT interface."""
         GenericACInterface.__init__(self)
 
-    def transform_conf_from_ac(self, engine, configuration):
+    def transform_conf_from_ac(self, engine, configuration, plantype):
         """
         Transform a configuration to the UP engine format.
 
