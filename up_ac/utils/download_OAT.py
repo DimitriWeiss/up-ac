@@ -1,5 +1,5 @@
 from sys import platform
-import wget
+from urllib import request as req
 import zipfile
 import os
 import shutil
@@ -31,9 +31,19 @@ def get_OAT():
     if not os.path.isdir(f'{path}/OAT'):
         os.mkdir(f'{path}/OAT')
 
+    ua_1 = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    ua_2 = '(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+
+    headers = {'User-Agent':
+               f'{ua_1} {ua_2}',
+               'Accept': 'application/json'}
+
+    request = req.Request(url, headers=headers)
+
     # Download binaries, if not in up-ac/OAT
     if not os.path.isfile(f'{path}/OAT/OAT.zip'):
-        wget.download(url, out=save_as)
+        with req.urlopen(request) as response, open(save_as, 'wb') as out_file:
+            out_file.write(response.read())
 
     # Unzip and delete .zip
     if os.path.isfile(f'{path}/OAT/OAT.zip') and \

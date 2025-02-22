@@ -45,18 +45,22 @@ class OATConfigurator(Configurator):
         path = self.scenario['path_to_OAT']
         read_param = False
         config = {}
-        with open(f'{path}tunerLog.txt', 'r') as f:
-            for line in f:
-                line = line.split(' ')
-                for i, l in enumerate(line):
-                    line[i] = l.replace(' ', '')
-                if 'results' in line:
-                    read_param = False
-                if read_param:
-                    param_name = str(line[0].replace('\t', '')[:-1])
-                    config[param_name] = line[1].replace('\n', '')      
-                if 'according' in line:
-                    read_param = True
+        if os.path.isfile(f'{path}tunerLog.txt'):
+            with open(f'{path}tunerLog.txt', 'r') as f:
+                for line in f:
+                    line = line.split(' ')
+                    for i, l in enumerate(line):
+                        line[i] = l.replace(' ', '')
+                    if 'results' in line:
+                        read_param = False
+                    if read_param:
+                        param_name = str(line[0].replace('\t', '')[:-1])
+                        config[param_name] = line[1].replace('\n', '')      
+                    if 'according' in line:
+                        read_param = True
+
+        else:
+            config = {'No config': None}
                     
         return config
 
@@ -64,18 +68,21 @@ class OATConfigurator(Configurator):
 
         path = self.scenario['path_to_OAT']
         config = {}
-        with open(f'{path}tunerLog.txt', 'r') as f:
-            for line in f:
-                line = line.split(' ')
-                for i, l in enumerate(line):
-                    line[i] = l.replace(' ', '')
-                if 'Finished' in line:
-                    if int(line[2]) != int(line[4]):
-                        print('OAT stopped at configuration_time!')
-                        print('Best configuration was at generation',
-                              line[2], '/', line[4])
-                    else:
-                        print('OAT finished the AC run!')
+        if os.path.isfile(f'{path}tunerLog.txt'):
+            with open(f'{path}tunerLog.txt', 'r') as f:
+                for line in f:
+                    line = line.split(' ')
+                    for i, l in enumerate(line):
+                        line[i] = l.replace(' ', '')
+                    if 'Finished' in line:
+                        if int(line[2]) != int(line[4]):
+                            print('OAT stopped at configuration_time!')
+                            print('Best configuration was at generation',
+                                  line[2], '/', line[4])
+                        else:
+                            print('OAT finished the AC run!')
+        else:
+            config = {'No config': None}
                     
         return config
 
@@ -285,7 +292,7 @@ class OATConfigurator(Configurator):
                      configuration_time=120, n_trials=400, min_budget=1,
                      max_budget=3, crash_cost=0, planner_timelimit=30,
                      n_workers=1, instances=[], instance_features=None,
-                     metric='runtime', popSize=128, evlaLimit=2147483647,
+                     metric='runtime', popSize=128, evalLimit=2147483647,
                      tourn_size=8, winner_percent=0.125, racing=False,
                      numGens=None, goalGen=None, patience=10):
         """
@@ -370,7 +377,7 @@ class OATConfigurator(Configurator):
             instance_dir=inst_dir,
             path_to_OAT=oat_dir,
             popSize=popSize,
-            evlaLimit=evlaLimit,
+            evalLimit=evalLimit,
             tourn_size=tourn_size,
             winner_percent=winner_percent,
             racing=racing,
@@ -410,7 +417,7 @@ class OATConfigurator(Configurator):
             self.planner_timelimit = self.scenario['timelimit']
             min_budget = self.scenario['start_gen']
             max_budget = self.scenario['end_gen']
-            evalLimit = self.scenario['evlaLimit']
+            evalLimit = self.scenario['evalLimit']
             popSize = self.scenario['popSize']
             tourn_size = self.scenario['tourn_size']
             winner_percent = self.scenario['winner_percent']

@@ -29,6 +29,7 @@ from utils.parametrizable_engines import parametrizable_engines
 
 pcs = patch_pcs(pcs)
 
+
 class GenericACInterface():
     """Generic AC interface."""
 

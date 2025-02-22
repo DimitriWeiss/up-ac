@@ -3,6 +3,7 @@ import os
 import sys
 import shutil
 import json
+from ConfigSpace.read_and_write import pcs
 
 from selector.run_ac import ac
 
@@ -108,6 +109,10 @@ class SelectorConfigurator(Configurator):
         :param list instances: List of problem instance paths (default is empty list, uses train_set).
         :param dict instance_features: Dictionary containing instance names and lists of features (default is None).
         :param str metric: The optimization metric, either 'runtime' or 'quality' (default is 'runtime').
+        :param int memory_limit: At which amount of MB used by a planning engine to terminate the run.
+        :param int patience: Extra time in seconds to grant engine to terminate gracefully.
+        :param str output_dir: Name of the directory selector writes to (directory is at .)
+        :param str ray_mode: Set to 'desktop' if running locally, or 'cluster' if running in SLURM
 
         :raises ValueError: If an unsupported metric is provided.
         """

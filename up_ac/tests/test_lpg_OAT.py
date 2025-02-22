@@ -40,10 +40,9 @@ class TestOatLpgOnQuality(unittest.TestCase):
     OAC.set_training_instance_set(instances)
     OAC.set_test_instance_set(instances)
 
-    OAC.set_scenario(engine[0],
-                     ogaci.engine_param_spaces[engine[0]], ogaci,
-                     configuration_time=30, n_trials=30,
-                     crash_cost=0, planner_timelimit=15, n_workers=3,
+    OAC.set_scenario(engine[0], ogaci.engine_param_spaces[engine[0]],
+                     ogaci, configuration_time=30, n_trials=30,
+                     crash_cost=10000, planner_timelimit=15, n_workers=3,
                      instance_features=None, popSize=5, metric=metric,
                      evalLimit=1)
 

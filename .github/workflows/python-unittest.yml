@@ -12,12 +12,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug GitHub PAT
+        run: |
+          echo "Checking GITHUB_PAT..."
+          if [ -z "$GITHUB_PAT" ]; then
+            echo "❌ GITHUB_PAT is not set"
+            exit 1
+          else
+            echo "✅ GITHUB_PAT is set"
+            curl -H "Authorization: token $GITHUB_PAT" https://api.github.com/user
+          fi
+        env:
+          GITHUB_PAT: ${{ secrets.WORKFLOW }}
   build:
 
     runs-on: ${{ matrix.os }}
     name: Test UPAC on ${{ matrix.os }} and Irace from ${{ matrix.r-package-source }}
     env: 
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PAT: ${{ secrets.WORKFLOW }}
     strategy:
       fail-fast: false
       matrix:
@@ -28,6 +43,20 @@ jobs:
         r-package-source: ["github::MLopez-Ibanez/irace"]
 
     steps:
+
+    - name: Check GitHub PAT
+      env:
+        GITHUB_PAT: ${{ secrets.WORKFLOW }}
+        GH_TOKEN: ${{ secrets.WORKFLOW }}  # Needed for gh CLI if used
+      run: |
+        if [ -z "$GITHUB_PAT" ]; then
+          echo "❌ GITHUB_PAT is not set"
+          exit 1
+        else
+          echo "✅ GITHUB_PAT is set"
+          gh auth status || echo "⚠️ Warning: Authentication check failed"
+        fi
+      
 
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -50,7 +79,11 @@ jobs:
 
     - name: Install github::MLopez-Ibanez/irace
       if: ${{ matrix.r-package-source == 'github::MLopez-Ibanez/irace' }}
+      env:
+        GITHUB_PAT: ${{ secrets.WORKFLOW }}  # Ensure the token is passed
       run: |
+        Sys.setenv(GITHUB_PAT = Sys.getenv("GITHUB_PAT"))
+        install.packages("remotes")
         remotes::install_github('MLopez-Ibanez/irace', upgrade = 'never', build = FALSE)
       shell: Rscript {0}
 

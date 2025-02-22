@@ -1,7 +1,7 @@
 .. _ac-tools:
 
 Automatic algorithm configuration tools
-==============================
+=======================================
 
 Irace
 -----
@@ -81,21 +81,23 @@ For more details on SMAC refer to `the SMAC3 GitHub <https://automl.github.io/SM
     
     
 Selector
-----
+--------
 
 Selector is an ensemble-based automated algorithm configurator. The current implementation includes functionalities and models from CPPL, GGA and SMAC.
 
 
 For more details on Selector refer to `the Selector GitHub <https://github.com/dotbielefeld/selector>`_.
 
+
 .. automodule:: up_ac.Selector_configurator
-    :members:    
+    :members:   
 
 .. automodule:: up_ac.Selector_interface
     :members:
    
 
 .. _genFunc:
+
 Generic configuration tools
 ---------------------------
 
@@ -106,11 +108,5 @@ These can be used to create custom automated algorithm configurators not include
 .. automodule:: up_ac.configurators
     :members:
 
-.. autoattribute:: up_ac.configurators
-    :members:
-
 .. automodule:: up_ac.AC_interface
-    :members:
-
-.. autoattribute:: up_ac.AC_interface
     :members:

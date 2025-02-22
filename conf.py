@@ -1,67 +1,39 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+import os
+import sys
+import mock
+import sphinx_rtd_theme
 
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+# Add the module path (if needed)
+sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
-
 project = 'up_ac'
 copyright = '2023, Dimitri Weiss'
 author = 'Dimitri Weiss'
+release = '0.0.2'
 
-# The full version, including alpha/beta/rc tags
-release = '0.0.1'
-
-
-# -- General configuration ---------------------------------------------------
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-#exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
-
-# -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-templates_path = ['_templates']
-
-# -- Options for HTML output
-
-import sphinx_rtd_theme
-
-html_theme = "sphinx_rtd_theme"
-#html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
+# -- Sphinx Extensions ------------------------------------------------------
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosectionlabel',
 ]
-import os
-import sys
-sys.path.insert(0, os.path.abspath('.'))
 
-#os.system("Rscript -e \"install.packages('irace', repos='https://cloud.r-project.org')\"")
+# -- Mocking Missing Modules ------------------------------------------------
+# This prevents Sphinx from failing when importing unavailable dependencies
+#autodoc_mock_imports = ["selector", "selector.run_ac", "irace"]
 
+# Alternatively, you can mock them explicitly using unittest.mock
+#MOCK_MODULES = ["selector", "selector.run_ac"]
+#for mod_name in MOCK_MODULES:
+#    sys.modules[mod_name] = mock.Mock()
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+MOCK_MODULES = ["selector", "selector.run_ac"]
+# sys.modules.update((mod, mock.Mock()) for mod in MOCK_MODULES)
+
+autodoc_mock_imports = ["selector", "selector.run_ac", "irace", "ac"]
+
+# -- HTML Output ------------------------------------------------------------
+html_theme = "sphinx_rtd_theme"
+templates_path = ['_templates']
 html_static_path = ['_static']
 html_build_dir = '$READTHEDOCS_OUTPUT/html/'
-autodoc_mock_imports = ["irace"]
-#autoapi_dirs = ['up_ac_files/AC_interface']

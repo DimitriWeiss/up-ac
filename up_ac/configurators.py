@@ -203,7 +203,7 @@ class Configurator():
 
     def trigger_gc_for_children(self, pid):
         """
-        Triggers garbage collection for child Java processes.
+        Triggers garbage collection for child processes.
 
         :param pid: PID of parent Process.
         :type names: int
@@ -411,10 +411,6 @@ class Configurator():
                         f = planner_timelimit
                     elif metric == 'quality':
                         f = crash_cost
-
-                print('\n')
-                print('Instance', instance_p)
-                print('Pure feedback:', f)
 
                 if metric == 'runtime':
                     if f is None or f == 'unsolvable':

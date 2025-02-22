@@ -12,7 +12,7 @@ In particular, this notebook will go through an example of Algorithm Configurati
 For this, we use SMAC, a Sequential Model-Based Optimization for General Algorithm Configuration.
 
 Generic configuration tools
-------------------
+---------------------------
 
 Within this project there are also some generic configuration tools, which can be used as a base to implement other configuration tools of choice.
 More information on these can be found in the :ref:`genFunc` section.

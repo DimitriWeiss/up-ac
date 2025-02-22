@@ -17,7 +17,7 @@ from up_ac.Smac_configurator import SmacConfigurator
 from up_ac.Smac_interface import SmacInterface
 
 allowed_combinations = {'quality': {'OneshotPlanner': [['lpg'], ['fast-downward'], ['enhsp'], ['symk'], ['tamer'], ['pyperplan']], 
-                                    'AnytimePlanner': [['fast-downward'], ['symk'], ['lpg'], ['enhsp']]},
+                                    'AnytimePlanner': [['fast-downward'], ['symk'], ['lpg-anytime'], ['enhsp-any']]},
                         'runtime': {'OneshotPlanner': [['lpg'], ['fast-downward'], ['enhsp'], ['symk'], ['tamer'], ['pyperplan']]}}
 allowed_keys = allowed_combinations.keys()
 
