@@ -1,7 +1,6 @@
 antlr4-python3-runtime==4.7.2
 cffi==1.16.0
 cloudpickle==2.2.1
-ConfigSpace==0.7.1
 dill==0.3.7
 emcee==3.1.4
 exceptiongroup==1.1.2
