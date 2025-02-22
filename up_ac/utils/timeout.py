@@ -48,7 +48,7 @@ def linux_timeout(planner, engine, timelimit, config):
         path = os.path.abspath(up_enhsp.__file__)
         path = path.rsplit('/', 1)[0]
 
-        print('config in to', config)
+        # print('config in to', config)
         config = config['params'].split()
 
         #search = config['search_algorithm']
@@ -70,7 +70,7 @@ def linux_timeout(planner, engine, timelimit, config):
                 base_command = map(str.strip, base_command)
                 base_command = ' '.join(base_command)
 
-                print('base_command', base_command)
+                #print('base_command', base_command)
 
                 return base_command
 
@@ -333,7 +333,7 @@ def run_command_posix_select_enhsp(
     proc_out_buff: List[str] = []
     proc_err_buff: List[str] = []
 
-    print(cmd)
+    #print(cmd)
 
     engine._process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True

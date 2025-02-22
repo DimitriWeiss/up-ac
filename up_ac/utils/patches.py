@@ -75,8 +75,6 @@ def patch_pcs(pcs):
 
             if "|" in line:
                 # It's a condition
-                print(pp_condition)
-                print(dir(pp_condition))
                 try:
                     c = pp_condition.parseString(line)
                     conditions.append(c)

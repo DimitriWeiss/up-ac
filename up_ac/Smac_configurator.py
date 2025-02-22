@@ -132,18 +132,15 @@ class SmacConfigurator(Configurator):
                         elif metric == 'quality':
                             feedback = self.crash_cost
 
-
                 except (AssertionError, NotImplementedError,
                         UPProblemDefinitionError, UPException,
                         UnicodeDecodeError) as err:
-                    print('Exception', '\n\n')
                     if self.verbose:
                         print('\n** Error in planning engine!', err)
                     if metric == 'runtime':
                         feedback = timelimit
                     elif metric == 'quality':
                         feedback = self.crash_cost
-
 
                 if feedback == 'unsolvable':
                     if metric == 'runtime':

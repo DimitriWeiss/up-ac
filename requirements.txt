@@ -12,7 +12,6 @@ exceptiongroup==1.1.2
 fsspec==2023.6.0
 grpcio==1.56.0
 grpcio-tools==1.56.0
-irace @ git+https://github.com/DimitriWeiss/up-iracepy@main
 importlib-metadata==6.8.0
 iniconfig==2.0.0
 Jinja2==3.1.2
@@ -49,7 +48,6 @@ scipy==1.10.1
 six==1.16.0
 sortedcontainers==2.4.0
 swig==4.1.1
-smac==2.0.1
 tarski==0.8.2
 tblib==2.0.0
 threadpoolctl==3.1.0

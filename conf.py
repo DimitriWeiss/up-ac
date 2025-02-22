@@ -30,7 +30,8 @@ extensions = [
 MOCK_MODULES = ["selector", "selector.run_ac"]
 # sys.modules.update((mod, mock.Mock()) for mod in MOCK_MODULES)
 
-autodoc_mock_imports = ["selector", "selector.run_ac", "irace", "ac", "up_lpg"]
+autodoc_mock_imports = ["selector", "selector.run_ac", "irace", "ac", "up_lpg",
+                        "smac"]
 
 # -- HTML Output ------------------------------------------------------------
 html_theme = "sphinx_rtd_theme"

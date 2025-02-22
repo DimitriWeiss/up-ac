@@ -56,7 +56,6 @@ jobs:
           echo "✅ GITHUB_PAT is set"
           gh auth status || echo "⚠️ Warning: Authentication check failed"
         fi
-      
 
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -73,9 +72,6 @@ jobs:
 
     - uses: r-lib/actions/setup-r-dependencies@v2
       if: ${{ matrix.r-package-source == 'github::MLopez-Ibanez/irace' }}
-      #with:
-      #  packages: remotes
-      #  pak-version: devel
       with:
         packages: ${{ matrix.r-package-source }}
         dependencies: '"hard"'
@@ -91,16 +87,11 @@ jobs:
         remotes::install_github('MLopez-Ibanez/irace', upgrade = 'never', build = FALSE)
       shell: Rscript {0}
 
-    - uses: r-lib/actions/setup-r-dependencies@v2
-      if: ${{ matrix.r-package-source == 'cran::irace' }}
-      with:
-        packages: ${{ matrix.r-package-source }}
-        dependencies: '"hard"'
-        pak-version: devel
-
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install smac==2.0.1
+        pip install git+https://github.com/DimitriWeiss/up-iracepy@main
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Test with unittest
