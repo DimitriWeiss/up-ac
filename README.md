@@ -1,41 +1,102 @@
-![act-logo](https://raw.githubusercontent.com/wiki/nektos/act/img/logo-150.png)
+# Algorithm Configuration for the AIPlan4EU Unified Planning
 
-# Overview [![push](https://github.com/nektos/act/workflows/push/badge.svg?branch=master&event=push)](https://github.com/nektos/act/actions) [![Join the chat at https://gitter.im/nektos/act](https://badges.gitter.im/nektos/act.svg)](https://gitter.im/nektos/act?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Go Report Card](https://goreportcard.com/badge/github.com/nektos/act)](https://goreportcard.com/report/github.com/nektos/act) [![awesome-runners](https://img.shields.io/badge/listed%20on-awesome--runners-blue.svg)](https://github.com/jonico/awesome-runners)
+Use algorithm configuration on several planners within the unified planning framework to enhance their performance. Development is conducted by the Decision and Operation Technologies group from Bielefeld University (https://github.com/DOTBielefeld).
 
-> "Think globally, `act` locally"
+# Installation
 
-Run your [GitHub Actions](https://developer.github.com/actions/) locally! Why would you want to do this? Two reasons:
+At the moment an installation is only possible via 
 
-- **Fast Feedback** - Rather than having to commit/push every time you want to test out the changes you are making to your `.github/workflows/` files (or for any changes to embedded GitHub actions), you can use `act` to run the actions locally. The [environment variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables) and [filesystem](https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#filesystems-on-github-hosted-runners) are all configured to match what GitHub provides.
-- **Local Task Runner** - I love [make](<https://en.wikipedia.org/wiki/Make_(software)>). However, I also hate repeating myself. With `act`, you can use the GitHub Actions defined in your `.github/workflows/` to replace your `Makefile`!
+```
+pip install git+https://github.com/DimitriWeiss/up-ac.git
+```
 
-> [!TIP]
-> **Now Manage and Run Act Directly From VS Code!**<br/>
-> Check out the [GitHub Local Actions](https://sanjulaganepola.github.io/github-local-actions-docs/) Visual Studio Code extension which allows you to leverage the power of `act` to run and test workflows locally without leaving your editor.
+# Planning engines
 
-# How Does It Work?
+If a planning engine which is integrated in this algorithm configuration extension is not available on your system, you can install it via
 
-When you run `act` it reads in your GitHub Actions from `.github/workflows/` and determines the set of actions that need to be run. It uses the Docker API to either pull or build the necessary images, as defined in your workflow files and finally determines the execution path based on the dependencies that were defined. Once it has the execution path, it then uses the Docker API to run containers for each action based on the images prepared earlier. The [environment variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables) and [filesystem](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#file-systems) are all configured to match what GitHub provides.
+```
+pip install --pre unified-planning[<engine_name>]
+```
 
-Let's see it in action with a [sample repo](https://github.com/cplee/github-actions-demo)!
+## Planning engines integrated in the algorithm configuration
 
-![Demo](https://raw.githubusercontent.com/wiki/nektos/act/quickstart/act-quickstart-2.gif)
+The development of the unified planning framework is still ongoing. Hence, some of the integrated planning engines are not yet available for automated algorithm configuration. Planning engines confirmed to work in this implementation are:
 
-# Act User Guide
+- LPG
+- Fast-Downward
+- SymK
+- ENHSP
+- Tamer
+- Pyperplan
 
-Please look at the [act user guide](https://nektosact.com) for more documentation.
+It is possible to adjust the configuration space of each engine according to your needs by passing it to the set_scenario() function. Read (https://automl.github.io/ConfigSpace/main/) for details on how to define a ConfigSpace.
 
-# Support
+# Automated Algorithm Configuration methods
 
-Need help? Ask on [Gitter](https://gitter.im/nektos/act)!
+There are three methods currently integrated in this implementation. It is possible to integrate further algorithm configuration methods using the classes
+```
+up_ac.configurators.Configurator
+```
+and
+```
+up_ac.AC_interface.GenericACInterface
+```
 
-# Contributing
+The methods integrated are:
 
-Want to contribute to act? Awesome! Check out the [contributing guidelines](CONTRIBUTING.md) to get involved.
+## SMAC3
 
-## Manually building from source
+Smac can be installed via 
 
-- Install Go tools 1.20+ - (<https://golang.org/doc/install>)
-- Clone this repo `git clone git@github.com:nektos/act.git`
-- Run unit tests with `make test`
-- Build and install: `make install`
+```
+pip install smac==2.0.1
+```
+
+. For further details refer to (https://automl.github.io/SMAC3/main/).
+
+## Optano Algorithm Tuner (OAT)
+
+To use OAT, run the following two functions after installation of up_ac.
+
+```
+up_ac.utils.download_OAT.get_OAT()
+up_ac.utils.download_OAT.copy_call_engine_OAT()
+```
+
+The first function generates a directory for OAT, downloads compiled code for OAT and saves it in the up_ac directory. The second function moves code to the OAT directory. Once you have run these functions, you do not need to run them again, except if you have removed the OAT directory.
+
+To remove the OAT directory run:
+
+```
+up_ac.utils.download_OAT.delete_OAT()
+```
+
+For further details on OAT refer to (https://docs.optano.com/algorithm.tuner/current/).
+
+## Irace
+
+In order to use Irace you need to install R on your system. After that you need to install the R package for irace from the R console by:
+
+```
+install.packages("irace", repos = "https://cloud.r-project.org")
+```
+
+The algorithm configuration implementation will then access irace via the python package rpy2.
+
+For further details on Irace refer to (https://github.com/cran/irace) and the python implementation of irace (https://github.com/auto-optimization/iracepy).
+
+## Selector
+
+Selector can be installed via
+
+```
+pip install selector-ac
+```
+
+Selector is an ensemble-based automated algorithm configurator and incorporates functionalities and models from CPPL, GGA and SMAC. Since Selector is implemented with a different version of SMAC than the one used for the SMAC configurator in this library, you should use a separate environment/ virtual environment to configure planners with Selector. For further details on Selector refer to (https://github.com/dotbielefeld/selector).
+
+## Acknowledgments
+
+<img src="https://www.aiplan4eu-project.eu/wp-content/uploads/2021/07/euflag.png" width="60" height="40">
+
+This library is being developed for the AIPlan4EU H2020 project (https://aiplan4eu-project.eu) that is funded by the European Commission under grant agreement number 101016442.
