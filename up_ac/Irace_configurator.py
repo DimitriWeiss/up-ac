@@ -2,9 +2,6 @@
 from irace import irace
 from unified_planning.exceptions import UPProblemDefinitionError, UPException
 
-from AC_interface import *
-from configurators import Configurator
-
 import timeit
 import signal
 import sys
@@ -16,6 +13,9 @@ from concurrent.futures import TimeoutError
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import *
+from configurators import Configurator
 
 
 class TimeoutException(Exception):
@@ -90,7 +90,6 @@ class IraceConfigurator(Configurator):
 
                 except UPProblemDefinitionError as e:
                     print(e)
-                    print('UPProblemDefinitionError for instance', instance_p)
                     if metric == 'runtime':
                         feedback = timelimit * 2
                         feedback = {'cost': feedback, 'time': feedback}
@@ -118,7 +117,6 @@ class IraceConfigurator(Configurator):
                                                        metric, engine,
                                                        mode, pddl_problem,
                                                        timelimit)
-                            print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&', feedback)
 
                             return feedback
                     else:
@@ -130,12 +128,7 @@ class IraceConfigurator(Configurator):
                                                        mode, pddl_problem,
                                                        timelimit)
 
-                            print('feedback in solve', feedback)
-
                             return feedback
-
-                    #feedback = solve(config, metric, engine,
-                    #                         mode, pddl_problem)
 
                     try:
                         if engine == 'tamer' or engine == 'pyperplan':
@@ -151,45 +144,18 @@ class IraceConfigurator(Configurator):
                                 print(err)
                                 feedback = penalty
                             except Exception as e:
-                                print('Exception in planner feedback function:', e)
+                                print(e)
                                 feedback = penalty
-                            print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-                            print('Tamer/Pyperplan feedback:')
-                            print(feedback)
-                            print('On instance:')
-                            print(instance_p)
-                            print('~~~~~~~~~~~~~~~~~~~~~~~~~')
                         else:
                             with time_limit(timelimit):
                                 feedback = solve(config, metric, engine,
                                                  mode, pddl_problem)
 
-                        '''
-                        try:
-                            feedback = \
-                                func_timeout.func_timeout(
-                                    self.planner_timelimit, solve,
-                                    args=[
-                                        config, metric, engine,
-                                        mode, pddl_problem])
-                        except func_timeout.FunctionTimedOut:
-                            if metric == 'runtime':
-                                feedback = self.planner_timelimit
-                            elif metric == 'quality':
-                                feedback = self.crash_cost
-                        '''
-                    
-                    #try:
-                    #    feedback = feedback.result()
-                    except TimeoutException: #TimeoutError:
+                    except TimeoutException:  # TimeoutError:
                         if metric == 'runtime':
                             feedback = timelimit
                         elif metric == 'quality':
                             feedback = self.crash_cost
-
-                    print(config)
-                    print('problem.name', pddl_problem.name)
-                    print('feedback in planner_feedback', feedback)
 
                 except (AssertionError, NotImplementedError,
                         UPProblemDefinitionError, UPException,
@@ -210,24 +176,14 @@ class IraceConfigurator(Configurator):
                         self.print_feedback(engine, instance_p, feedback)
                         runtime = timeit.default_timer() - start
                         feedback = {'cost': feedback, 'time': runtime}
-                        print('Qualitry Feedback:', feedback)
                         return feedback
                     elif metric == 'runtime':
                         if engine in ('tamer', 'pyperplan') and feedback == 'measure':
                             feedback = timeit.default_timer() - start
                         self.print_feedback(engine, instance_p, feedback)
                         feedback = {'cost': feedback, 'time': feedback}
-                        # else:
-                        #     feedback = feedback
-                        #     self.print_feedback(engine, instance_p, feedback)
-                        #     feedback = {'cost': feedback, 'time': feedback}
                         return feedback
                 else:
-                    # Penalizing failed runs and simulating timeout
-                    # now = timeit.default_timer() - start
-                    # while now < timelimit:
-                    #    time.sleep(1)
-                    #    now = timeit.default_timer() - start
                     if metric == 'runtime':
                         # Penalty is max runtime in runtime scenario
                         feedback = timelimit * 2
@@ -239,11 +195,6 @@ class IraceConfigurator(Configurator):
                         self.print_feedback(engine, instance_p, feedback)
                         feedback = {'cost': feedback, 'time': timelimit * 2}
                     return feedback
-
-            #if engine == 'tamer':
-            #    from pebble import concurrent
-            #    return concurrent.process(planner_feedback, timeout=self.planner_timelimit, daemon=False)
-            #else:
 
             return planner_feedback
         else:
@@ -290,7 +241,6 @@ class IraceConfigurator(Configurator):
         :raises ValueError: If the provided metric is not supported.
         """
         if not instances:
-            print('self.train_set', self.train_set)
             if isinstance(self.train_set[0], tuple):
                 instances = []
                 for ts in self.train_set:

@@ -9,8 +9,6 @@ import traceback
 import os
 import sys
 
-from ConfigSpace.read_and_write import pcs
-
 # make sure test can be run from anywhere
 path = os.getcwd().rsplit('up-ac', 1)[0]
 if path[-1] != "/":
@@ -26,11 +24,8 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils.ac_feedback import qaul_feedback, runtime_feedback
-from utils.patches import patch_pcs
 from utils.timeout import linux_timeout
 from utils.parametrizable_engines import parametrizable_engines
-
-pcs = patch_pcs(pcs)
 
 
 class GenericACInterface():
@@ -99,8 +94,14 @@ class GenericACInterface():
             pcs_dir = pcs_dir + '/'
 
         for engine in engines:
+            import ConfigSpace
+            from utils.patches import patch_pcs
+            ConfigSpace.read_and_write.pcs = \
+                patch_pcs(ConfigSpace.read_and_write.pcs)
+
             with open(pcs_dir + engine + '.pcs', 'r') as f:
-                self.engine_param_spaces[engine] = pcs.read(f)
+                self.engine_param_spaces[engine] = \
+                    ConfigSpace.read_and_write.pcs.read(f)
 
             with open(pcs_dir + engine + '.pcs', 'r') as f:
                 lines = f.readlines()

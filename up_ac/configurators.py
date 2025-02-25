@@ -2,8 +2,6 @@
 from unified_planning.io import PDDLReader
 from unified_planning.exceptions import UPProblemDefinitionError
 
-from AC_interface import *
-
 import json
 import timeit
 import time
@@ -14,8 +12,21 @@ import psutil
 import signal
 import multiprocessing
 
+# make sure test can be run from anywhere
+path = os.getcwd().rsplit('up-ac', 1)[0]
+if path[-1] != "/":
+    path += "/"
+path += 'up-ac/up_ac'
+if not os.path.isfile(sys.path[0] + '/configurators.py') and \
+        'up-ac' in sys.path[0]:
+    sys.path.append(sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac')
+    sys.path.append(sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac/up_ac')
+    sys.path.append(sys.path[0].rsplit('up-ac', 1)[0] + 'up-ac/utils')
+
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import *
 
 
 class Configurator():
@@ -45,6 +56,40 @@ class Configurator():
         self.crash_cost = 0
         self.ac = None
         self.verbose = True
+
+        # Control for integrated planner versions
+        '''
+        try:
+            import up_enhsp
+            cai('up-enhsp', '0.0.25')
+        except (ImportError, ModuleNotFoundError):
+            pass
+        try:
+            import up_fast_downward
+            cai('up-fast-downward', '0.4.1')
+        except (ImportError, ModuleNotFoundError):
+            pass
+        try:
+            import up_lpg
+            cai('up-lpg', '0.0.11')
+        except (ImportError, ModuleNotFoundError):
+            pass
+        try:
+            import up_pyperplan
+            cai('up-pyperplan', '1.1.0')
+        except (ImportError, ModuleNotFoundError):
+            pass
+        try:
+            import up_symk
+            cai('up-symk', '1.3.1')
+        except (ImportError, ModuleNotFoundError):
+            pass
+        try:
+            import up_tamer
+            cai('up-tamer', '1.1.3')
+        except (ImportError, ModuleNotFoundError):
+            pass
+        '''
 
     def print_feedback(self, engine, instance, feedback):
         """
@@ -296,6 +341,7 @@ class Configurator():
         :rtype: float
         """
         if incumbent is not None:
+            underline = '____________________'
 
             if not instances:
                 instances = self.test_set
@@ -426,22 +472,28 @@ class Configurator():
                 if metric == 'quality' and (f is None or f == 'unsolvable'):
                     f = crash_cost
 
-                if f is not None and self.metric == 'quality':
+                if f is not None:
                     avg_f += f
                 else:
-                    avg_f += self.crash_cost
+                    if metric == 'quality':
+                        avg_f += self.crash_cost
+                    elif metric == 'runtime':
+                        avg_f += planner_timelimit
                 if metric == 'runtime':
                     if self.verbose:
                         print(f'\nFeedback on instance {inst}:\n\n', f, '\n')
+                        print(underline)
                 elif metric == 'quality':
                     if f is not None:
                         if self.verbose:
                             print(f'\nFeedback on instance {inst}:\n\n', f,
                                   '\n')
+                            print(underline)
                     else:
                         if self.verbose:
                             print(f'\nFeedback on instance {inst}:\n\n', None,
                                   '\n')
+                            print(underline)
 
             if nr_inst != 0:
                 avg_f = avg_f / nr_inst
@@ -459,7 +511,7 @@ class Configurator():
         else:
             return None
 
-    def save_config(self, path, config, gaci, engine):
+    def save_config(self, path, config, gaci, engine, plantype):
         """
         Save configuration in json file.
 
@@ -473,7 +525,7 @@ class Configurator():
         :type engine: str
         """
         if config is not None:
-            config = gaci.transform_conf_from_ac(engine, config)
+            config = gaci.transform_conf_from_ac(engine, config, plantype)
             with open(f'{path}/incumbent_{engine}.json', 'w') as f:
                 json.dump(config, f)
             if self.verbose:

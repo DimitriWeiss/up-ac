@@ -3,6 +3,8 @@
 Planning engines
 ==================
 
+Except for Tamer and Pyperplan and anytime plan quality, you can configure all planning engines listed here for runtime, plan quality and anytime plan quality regarding your instance set.
+
 LPG
 ---
 **Support Features:**
@@ -44,7 +46,7 @@ EnhSP
 
 - Optimality only assured for specific PDDL+ fragments (simple numeric planning problems)​
 
-symk 
+SymK 
 ----
 
 **Support Features:**
@@ -52,7 +54,7 @@ symk
 - State-of-the-art classical optimal and top-k planner based on symbolic search extending Fast Downward. It can find a single optimal plan or a set of k different best plans with the lowest cost for a given planning task.
 - Supported in the Oneshot and Anytime Planners in both quality and runtime modes.
 
-tamer
+Tamer
 ------
 
 Tamer is a temporal planner that supports temporal action-based problems.
@@ -62,7 +64,7 @@ Tamer is a temporal planner that supports temporal action-based problems.
 - Supported in the Oneshot Planner in the runtime mode.
 
 
-pyperplan
+Pyperplan
 ---------
 
 **Support Features:**

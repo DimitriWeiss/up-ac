@@ -31,17 +31,30 @@ def time_limit(seconds):
 
 
 def sel_call_up(instance, config):
-    path = os.getcwd().rsplit('up_ac', 1)[0]
-    if path[-1] != "/":
-        path += "/"
-    up_ac_path = path + 'up_ac'
-    sys.path.append(r"{}".format(up_ac_path))
-    sys.path.append(r"{}".format(path + 'up_ac/utils'))
-    path += 'up_ac/utils'
+
+    try:
+        import up_ac
+        path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+        up_ac_path = path
+        sys.path.append(r"{}".format(path))
+        sys.path.append(r"{}".format(path + '/utils'))
+        path += '/utils'
+    except ImportError:
+        path = os.getcwd().rsplit('up_ac', 1)[0]
+        if path[-1] != "/":
+            path += "/"
+        up_ac_path = path + 'up_ac'
+        sys.path.append(r"{}".format(up_ac_path))
+        sys.path.append(r"{}".format(path + 'up_ac/utils'))
+        path += 'up_ac/utils'
+
     setting_path = f'{path}/sel_feedback_setting'
     reader._env.error_used_name = False
 
-    from Selector_interface import SelectorInterface
+    try:
+        from up_ac.Selector_interface import SelectorInterface
+    except (ModuleNotFoundError, ImportError, Exception):
+        from Selector_interface import SelectorInterface
 
     with open(f'{setting_path}/feedback_args.txt', 'r') as f:
         feedback_args = ast.literal_eval(f.read())

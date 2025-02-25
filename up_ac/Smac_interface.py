@@ -1,12 +1,15 @@
 """Smac algorithm configuration interface for unified planning."""
-from AC_interface import GenericACInterface
-from utils.pcs_transform import transform_pcs
 import random
 import sys
 import os
+import subprocess
+import importlib
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import GenericACInterface
+from utils.pcs_transform import transform_pcs
 
 
 class SmacInterface(GenericACInterface):
@@ -15,6 +18,16 @@ class SmacInterface(GenericACInterface):
     def __init__(self):
         """Initialize Smac interface."""
         GenericACInterface.__init__(self)
+
+        if (importlib.metadata.version('ConfigSpace') != '0.6.1' and importlib.
+                util.find_spec('selector') is None):
+            print('Installing ConfigSpace 0.6.1')
+            subprocess.check_call([sys.executable, "-m", "pip", "install",
+                                   "ConfigSpace==0.6.1"],
+                                  stdout=subprocess.DEVNULL,
+                                  stderr=subprocess.DEVNULL)
+
+            os.execv(sys.executable, ['python'] + sys.argv)
 
     def transform_conf_from_ac(self, engine, configuration, plantype):
         """
@@ -381,7 +394,7 @@ class SmacInterface(GenericACInterface):
             if not isinstance(config, str) and 'params' not in config:
                 conf = ''
                 for name, value in config.items():
-                    conf += '-' + name[0] + ' ' + value + ' '
+                    conf += '-' + name[0] + ' ' + str(value) + ' '
                 config = {'params': conf}
 
         return config

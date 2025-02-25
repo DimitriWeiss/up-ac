@@ -1,6 +1,4 @@
 """OAT algorithm configuration interface for unified planning."""
-from AC_interface import GenericACInterface
-from utils.pcs_transform import transform_pcs
 
 from ConfigSpace.hyperparameters import (
     CategoricalHyperparameter,
@@ -13,9 +11,14 @@ from ConfigSpace.conditions import (
 import random
 import sys
 import os
+import subprocess
+import importlib
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import GenericACInterface
+from utils.pcs_transform import transform_pcs
 
 
 class OATInterface(GenericACInterface):
@@ -40,6 +43,15 @@ class OATInterface(GenericACInterface):
     def __init__(self):
         """Initialize OAT interface."""
         GenericACInterface.__init__(self)
+
+        if importlib.metadata.version('ConfigSpace') != '0.6.1':
+            print('Installing ConfigSpace 0.6.1')
+            subprocess.check_call([sys.executable, "-m", "pip", "install",
+                                   "ConfigSpace==0.6.1"],
+                                  stdout=subprocess.DEVNULL,
+                                  stderr=subprocess.DEVNULL)
+
+            os.execv(sys.executable, ['python'] + sys.argv)
 
     def transform_conf_from_ac(self, engine, configuration, plantype):
         """

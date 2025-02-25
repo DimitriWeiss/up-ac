@@ -3,11 +3,10 @@ import pandas as pd
 import random
 import sys
 import os
+import subprocess
+import importlib
 import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
-
-from AC_interface import GenericACInterface
-from utils.pcs_transform import transform_pcs
 
 from ConfigSpace.hyperparameters import (
     CategoricalHyperparameter,
@@ -23,6 +22,9 @@ from ConfigSpace.conditions import (
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from AC_interface import GenericACInterface
+from utils.pcs_transform import transform_pcs
+
 
 class IraceInterface(GenericACInterface):
     """Irace AC interface."""
@@ -30,6 +32,15 @@ class IraceInterface(GenericACInterface):
     def __init__(self):
         """Initialize Irace interface."""
         GenericACInterface.__init__(self)
+
+        if importlib.metadata.version('ConfigSpace') != '0.6.1':
+            print('Installing ConfigSpace 0.6.1')
+            subprocess.check_call([sys.executable, "-m", "pip", "install",
+                                   "ConfigSpace==0.6.1"],
+                                  stdout=subprocess.DEVNULL,
+                                  stderr=subprocess.DEVNULL)
+
+            os.execv(sys.executable, ['python'] + sys.argv)
 
     def transform_conf_from_ac(self, engine, configuration,
                                plantype='OneshotPlanner'):

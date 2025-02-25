@@ -6,10 +6,6 @@ import os
 import dill
 import sys
 
-from AC_interface import *
-from configurators import Configurator
-from utils.patch_daskrunner import patch_daskrunner
-
 import timeit
 import signal
 from contextlib import contextmanager
@@ -18,6 +14,10 @@ from pebble.common import ProcessExpired
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import *
+from configurators import Configurator
+from utils.patch_daskrunner import patch_daskrunner
 
 # We do this only to be able to set the SMAC output dir!
 AlgorithmConfigurationFacade = patch_daskrunner(AlgorithmConfigurationFacade)
@@ -48,7 +48,7 @@ class SmacConfigurator(Configurator):
         self.crash_cost = 0
         self.planner_timelimit = 0
         self.engine = None
-        self.gaci = None 
+        self.gaci = None
 
     def get_feedback_function(self, gaci, engine, metric, mode,
                               gray_box=False):
@@ -115,14 +115,17 @@ class SmacConfigurator(Configurator):
                             return feedback
 
                     try:
-                        if engine == 'tamer' or engine == 'pyperplan':
+                        if engine in ('tamer', 'pyperplan'):
                             future = solve(config, metric, engine,
                                            mode, pddl_problem)
                             try:
                                 feedback = future.result()
                             except (TimeoutError, ProcessExpired) as err:
                                 print(err)
-                                feedback = timelimit
+                                if metric == 'runtime':
+                                    feedback = timelimit
+                                elif metric == 'quality':
+                                    feedback = self.crash_cost
 
                         else:
                             with time_limit(timelimit):
@@ -175,17 +178,22 @@ class SmacConfigurator(Configurator):
                         # Penalty is max runtime in runtime scenario
                         feedback = timelimit
                         self.print_feedback(engine, instance, feedback)
-                    else:
+                    elif metric == 'quality':
                         # Penalty is defined by user in quality scenario
                         feedback = self.crash_cost
                         self.print_feedback(engine, instance, feedback)
 
                     return feedback
 
-            path = os.getcwd().rsplit('up_ac', 1)[0]
-            if path[-1] != "/":
-                path += "/"
-            path += 'up_ac/utils'
+            try:
+                import up_ac
+                path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+                path += '/utils'
+            except ImportError:
+                path = os.getcwd().rsplit('up_ac', 1)[0]
+                if path[-1] != "/":
+                    path += "/"
+                path += 'up_ac/utils'
 
             self.feedback_path = path
 
@@ -203,7 +211,7 @@ class SmacConfigurator(Configurator):
 
     def set_scenario(self, engine, param_space, gaci,
                      configuration_time=120, n_trials=400, min_budget=1,
-                     max_budget=3, crash_cost=0, planner_timelimit=30,
+                     max_budget=3, crash_cost=10000, planner_timelimit=30,
                      n_workers=1, instances=[], instance_features=None,
                      output_dir='smac3_output', metric='runtime',
                      patience=10):
@@ -286,10 +294,16 @@ class SmacConfigurator(Configurator):
         """
         if feedback_function is not None:
             # Import feedback function, since dask cannot pickle local objects            
-            path = os.getcwd().rsplit('up_ac', 1)[0]
-            if path[-1] != "/":
-                path += "/"
-            path += 'up_ac/utils'
+            try:
+                import up_ac
+                path = \
+                    '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+                path += '/utils'
+            except ImportError:
+                path = os.getcwd().rsplit('up_ac', 1)[0]
+                if path[-1] != "/":
+                    path += "/"
+                path += 'up_ac/utils'
             sys.path.append(r"{}".format(path))
             from load_smac_feedback import get_feedback
 

@@ -1,6 +1,21 @@
 """This module includes the necessary patches."""
 import pyparsing
-from ConfigSpace.read_and_write.pcs import *
+from ConfigSpace.read_and_write.pcs import (
+    ConfigurationSpace,
+    UniformIntegerHyperparameter,
+    UniformFloatHyperparameter,
+    CategoricalHyperparameter,
+    pp_cont_param,
+    pp_condition,
+    pp_cat_param,
+    pp_forbidden_clause,
+    ForbiddenEqualsClause,
+    ForbiddenAndConjunction,
+    OrderedDict,
+    EqualsCondition,
+    InCondition,
+    AndConjunction
+)
 
 
 def patch_pcs(pcs):

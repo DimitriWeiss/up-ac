@@ -1,6 +1,4 @@
 """Functionalities for managing and calling configurators."""
-from AC_interface import *
-from configurators import Configurator
 
 import timeit
 import os
@@ -18,6 +16,9 @@ from threading import Timer
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import *
+from configurators import Configurator
 
 
 class TimeoutException(Exception):
@@ -78,7 +79,7 @@ class OATConfigurator(Configurator):
                     for i, l in enumerate(line):
                         line[i] = l.replace(' ', '')
                     if 'Finished' in line:
-                        if int(line[2]) != int(line[4]):
+                        if 'generation' in line:
                             print('OAT stopped at configuration_time!')
                             print('Best configuration was at generation',
                                   line[2], '/', line[4])
@@ -132,10 +133,15 @@ class OATConfigurator(Configurator):
                 :return: Feedback value based on the planner's performance.
                 :rtype: float
                 """
-                path = os.getcwd().rsplit('up_ac', 1)[0]
-                if path[-1] != "/":
-                    path += "/"
-                path += 'up_ac'
+                try:
+                    import up_ac
+                    path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+                except ImportError:
+                    path = os.getcwd().rsplit('up_ac', 1)[0]
+                    if path[-1] != "/":
+                        path += "/"
+                    path += 'up_ac'
+
                 sys.path.append(r"{}".format(path))
 
                 self.reader = reader 
@@ -326,10 +332,14 @@ class OATConfigurator(Configurator):
 
         param_file = gaci.get_ps_oat(param_space)
 
-        path = os.getcwd().rsplit('up_ac', 2)[0]
-        if path[-1] != "/":
-            path += "/"
-        path += 'up_ac'
+        try:
+            import up_ac
+            path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+        except ImportError:
+            path = os.getcwd().rsplit('up_ac', 1)[0]
+            if path[-1] != "/":
+                path += "/"
+            path += 'up_ac'
 
         path_to_xml = f'{path}/OAT/{engine}parameterTree.xml'
         oat_dir = f'{path}/OAT/'
@@ -342,23 +352,16 @@ class OATConfigurator(Configurator):
             shutil.rmtree(inst_dir, ignore_errors=True)
 
         os.mkdir(inst_dir)
-        file_name = 0
+        
         if not instances:
-            if isinstance(self.train_set[0], tuple):
-                instances = []
-                for ts in self.train_set:
-                    instances.append(str(ts))
+            for ts in self.train_set:
+                instances.append(str(ts))
 
-                for inst in instances:
-                    with open(f'{inst_dir}/{file_name}.txt', 'w') as f:
-                        f.write(f'{inst}')
-                    file_name += 1
-
-            else:
-                for inst in instances:
-                    with open(f'{inst_dir}/{file_name}.txt', 'w') as f:
-                        f.write(f'{inst}')
-                    file_name += 1
+        file_name = 0
+        for inst in instances:
+            with open(f'{inst_dir}/{file_name}.txt', 'w') as f:
+                f.write(f'{inst}')
+            file_name += 1
 
         if numGens is None:
             numGens = int(((configuration_time / planner_timelimit) / 2) * 0.85)

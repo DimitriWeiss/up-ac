@@ -1,6 +1,7 @@
 git
 .github/workflows/python-unittest.yml_unused
 _build
+dist
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

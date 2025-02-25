@@ -7,14 +7,14 @@ from ConfigSpace.read_and_write import pcs
 
 from selector.run_ac import ac
 
-from AC_interface import *
-from configurators import Configurator
-
 import signal
 from contextlib import contextmanager
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from AC_interface import *
+from configurators import Configurator
 
 
 class TimeoutException(Exception):
@@ -129,10 +129,15 @@ class SelectorConfigurator(Configurator):
                 train_set_dict[inst[0]] = inst
                 instances.append(inst[0])
             self.train_set = train_set_dict
-        path = os.getcwd().rsplit('up_ac', 1)[0]
-        if path[-1] != "/":
-            path += "/"
-        path += 'up_ac/utils'
+        try:
+            import up_ac
+            path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+            path += '/utils'
+        except ImportError:
+            path = os.getcwd().rsplit('up_ac', 1)[0]
+            if path[-1] != "/":
+                path += "/"
+            path += 'up_ac/utils'
 
         self.feedback_path = path
         with open(f'{self.feedback_path}/instances.txt', 'w') as f:
@@ -163,10 +168,15 @@ class SelectorConfigurator(Configurator):
         self.gaci = gaci
         self.n_workers = n_workers
         number_tournaments = int(n_workers / tourn_size)
-        path = os.getcwd().rsplit('up_ac', 1)[0]
-        if path[-1] != "/":
-            path += "/"
-        path += 'up_ac/utils'
+        try:
+            import up_ac
+            path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+            path += '/utils'
+        except ImportError:
+            path = os.getcwd().rsplit('up_ac', 1)[0]
+            if path[-1] != "/":
+                path += "/"
+            path += 'up_ac/utils'
         shutil.copyfile(f'{path}/up_ac_wrapper.py', f'up_ac_wrapper.py')
         if len(self.train_set) < 8:
             smac_pca_dim = len(self.train_set)

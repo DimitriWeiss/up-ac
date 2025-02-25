@@ -14,14 +14,21 @@ Then install the irace R package via the R console by running:
 
 .. code-block:: R
 
-    install.packages("irace", repos = "https://cloud.r-project.org")
+    install.packages("remotes")
+    install.packages("irace", version = "3.5", repos = "https://cloud.r-project.org")
+
+
+After that you need to leave the R terminal and install the Irace Python package via
+
+.. code-block:: python
+
+    pip install git+https://github.com/DimitriWeiss/up-iracepy@main
+
 
 
 The algorithm configuration implementation will then access irace via the python package rpy2.
 
 For further details on Irace refer to the `irace GitHub <https://github.com/cran/irace>`_ and the `python implementation of irace <https://github.com/auto-optimization/iracepy>`_.
-
-
 
 
 .. automodule:: up_ac.Irace_configurator
@@ -38,10 +45,12 @@ The Optano algorithm tuner (OAT) executes tuning on optimization functions using
 While it is able to run on a single computing node it also supports multiple workers.
 Before being able to use OAT first execute the following code after having installed up-ac.
 
-.. code-block:: bash
+.. code-block:: python
+
+    from up_ac.utils.download_OAT import get_OAT, copy_call_engine_OAT, delete_OAT
     
-    up_ac.utils.download_OAT.get_OAT()
-    up_ac.utils.download_OAT.copy_call_engine_OAT()
+    get_OAT()
+    copy_call_engine_OAT()
 
 
 The first function generates a directory for OAT, downloads compiled code for OAT and saves it in the up_ac directory. 
@@ -50,9 +59,9 @@ Once you have run these functions, you do not need to run them again, except if 
 
 To remove the OAT directory run:
 
-.. code-block:: bash
+.. code-block:: python
 
-    up_ac.utils.download_OAT.delete_OAT()
+    delete_OAT()
 
 For more details on OAT refer to `the documentation <https://docs.optano.com/algorithm.tuner/current/>`_.
 
@@ -71,7 +80,15 @@ SMAC3 (Sequential Model-Based Algorithm Configuration) optimizes algorithm param
 It then uses an aggressive racing mechanism to efficiently compare configurations and iteratively refine the model, directing the search towards regions of the space where better configurations are likely to be found.
 In the autoconfiguration Smac can also make use of instance features to improve the predictions.
 
+You can install it via
+
+.. code-block:: bash
+
+    pip install smac==2.0.1
+
+
 For more details on SMAC refer to `the SMAC3 GitHub <https://automl.github.io/SMAC3/main/>`_.
+
 
 .. automodule:: up_ac.Smac_configurator
     :members:    
@@ -87,6 +104,13 @@ Selector is an ensemble-based automated algorithm configurator. The current impl
 
 
 For more details on Selector refer to `the Selector GitHub <https://github.com/dotbielefeld/selector>`_.
+
+You can install Selector via
+
+.. code-block:: bash
+
+    pip install swig
+    pip install selector-ac
 
 
 .. automodule:: up_ac.Selector_configurator

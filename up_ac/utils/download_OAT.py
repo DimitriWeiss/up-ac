@@ -8,10 +8,14 @@ import stat
 
 def get_OAT():
     # Set path to up-ac
-    path = os.getcwd().rsplit('up_ac', 1)[0]
-    if path[-1] != "/":
-        path += "/"
-    path += 'up_ac'
+    try:
+        import up_ac
+        path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+    except ImportError:
+        path = os.getcwd().rsplit('up_ac', 1)[0]
+        if path[-1] != "/":
+            path += "/"
+        path += 'up_ac'
 
     # Path to OAT directory
     save_as = f'{path}/OAT/OAT.zip'
@@ -62,19 +66,28 @@ def get_OAT():
 
 def copy_call_engine_OAT():
     # Copy call_engine_OAT from utils to OAT directory
-    path = os.getcwd().rsplit('up_ac', 1)[0]
-    if path[-1] != "/":
-        path += "/"
-    path += 'up_ac'
+    try:
+        import up_ac
+        path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+    except ImportError:
+        path = os.getcwd().rsplit('up_ac', 1)[0]
+        if path[-1] != "/":
+            path += "/"
+        path += 'up_ac'
     
     shutil.copy(f'{path}/utils/call_engine_OAT.py', f'{path}/OAT/') 
 
 
 def delete_OAT():
     # Set path to up-ac
-    path = os.getcwd().rsplit('up_ac', 1)[0]
-    if path[-1] != "/":
-        path += "/"
-    path += 'up_ac'
+    try:
+        import up_ac
+        path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+    except ImportError:
+        path = os.getcwd().rsplit('up_ac', 1)[0]
+        if path[-1] != "/":
+            path += "/"
+        path += 'up_ac'
+
     if os.path.isdir(f'{path}/OAT/'):
         shutil.rmtree(f'{path}/OAT/')

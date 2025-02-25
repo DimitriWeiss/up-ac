@@ -12,8 +12,18 @@ class UP_AC_Wrapper():
 
         instance = runargs["instance"]
 
-        exc = os.path.dirname(__file__).rsplit('up_ac', 1)[0] \
-            + 'up_ac/utils/sel_call_up.py'
+        try:
+            import up_ac
+            path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+            path += '/utils'
+        except ImportError:
+            path = os.getcwd().rsplit('up_ac', 1)[0]
+            if path[-1] != "/":
+                path += "/"
+            path += 'up_ac/utils'
+
+        exc = path + '/sel_call_up.py'
+
         cmd = f"stdbuf -oL python3 {exc} --i {instance} --c \"{config}\" "
         return cmd
 
