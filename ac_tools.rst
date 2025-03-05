@@ -33,6 +33,7 @@ For further details on Irace refer to the `irace GitHub <https://github.com/cran
 
 .. automodule:: up_ac.Irace_configurator
     :members:
+    :exclude-members: TimeoutException
 
 .. automodule:: up_ac.Irace_interface
     :members:
@@ -67,7 +68,8 @@ For more details on OAT refer to `the documentation <https://docs.optano.com/alg
 
 
 .. automodule:: up_ac.OAT_configurator
-    :members:    
+    :members:
+    :exclude-members: TimeoutException
 
 .. automodule:: up_ac.OAT_interface
     :members:
@@ -84,6 +86,7 @@ You can install it via
 
 .. code-block:: bash
 
+    pip install swig
     pip install smac==2.0.1
 
 
@@ -92,6 +95,7 @@ For more details on SMAC refer to `the SMAC3 GitHub <https://automl.github.io/SM
 
 .. automodule:: up_ac.Smac_configurator
     :members:    
+    :exclude-members: TimeoutException
 
 .. automodule:: up_ac.Smac_interface
     :members:
@@ -115,6 +119,7 @@ You can install Selector via
 
 .. automodule:: up_ac.Selector_configurator
     :members:   
+    :exclude-members: TimeoutException
 
 .. automodule:: up_ac.Selector_interface
     :members:

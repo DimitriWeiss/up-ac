@@ -11,13 +11,16 @@ Quality tuning Fast-Downward with SMAC
 .. code-block:: python
 
     """Test up AC implementation."""
-    import unified_planning as up
     import up_ac
     import sys
     import os
 
+    from up_ac.Smac_configurator import SmacConfigurator
+    from up_ac.Smac_interface import SmacInterface
+
     # Get example PPDL files from up_ac
     path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
 
     # You can also provide a list of tuples (instance, domain) if some domains are
     # located in different places
@@ -26,11 +29,6 @@ Quality tuning Fast-Downward with SMAC
                  f'{path}/test_problems/depot/problem.pddl',
                  f'{path}/test_problems/miconic/problem.pddl',
                  f'{path}/test_problems/matchcellar/problem.pddl']
-
-    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
-
-    from up_ac.Smac_configurator import SmacConfigurator
-    from up_ac.Smac_interface import SmacInterface
 
     engines = ['fast-downward']
     metric = 'quality'
@@ -48,10 +46,18 @@ Quality tuning Fast-Downward with SMAC
     # Compute pddl instance features
     instance_features = {}
     for instance in instances:
-        instance_features[instance] \
-            = sgaci.compute_instance_features(
-                instance.rsplit('/', 1)[0] + '/domain.pddl',
-                instance)
+        if isinstance(instance, tuple):
+            domain = instance[1]
+            instance = instance[0]
+            instance_features[instance] \
+                = sgaci.compute_instance_features(
+                    domain,
+                    instance)
+        else:
+            instance_features[instance] \
+                = sgaci.compute_instance_features(
+                    instance.rsplit('/', 1)[0] + '/domain.pddl',
+                    instance)
 
     # Make UP print less
     up.shortcuts.get_environment().credits_stream = None
@@ -95,15 +101,15 @@ Runtime tuning SymK with OAT
     import os
     import up_ac
 
+    from up_ac.OAT_configurator import OATConfigurator
+    from up_ac.OAT_interface import OATInterface
+
+    # Get example PPDL files from up_ac
     path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
     sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
 
     # You can also provide a list of tuples (instance, domain) if some domains are
     # located in different places
-    from up_ac.OAT_configurator import OATConfigurator
-    from up_ac.OAT_interface import OATInterface
-
-    # pddl instance to test with
     instances = [f'{path}/test_problems/miconic/problem.pddl',
                  f'{path}/test_problems/depot/problem.pddl',
                  f'{path}/test_problems/safe_road/problem.pddl']
@@ -134,16 +140,17 @@ Runtime tuning SymK with OAT
                          crash_cost=10000, planner_timelimit=timelimit,
                          n_workers=4, instance_features=None, popSize=5,
                          metric=metric, evalLimit=1)
+
         OAC_fb_func = OAC.get_feedback_function(ogaci, engine,
                                                 metric, plantype)
-        # run algorithm configuration
+        # Run algorithm configuration
         incumbent, _ = OAC.optimize(feedback_function=OAC_fb_func)
 
-        # check configurations performance
+        # Check configurations performance
         perf = OAC.evaluate(metric, engine, plantype, OAC.incumbent,
                             ogaci)
 
-        # save best configuration found
+        # Save best configuration found
         OAC.save_config('.', OAC.incumbent, ogaci, engine, plantype)
 
 
@@ -153,17 +160,16 @@ Anytime tuning ENHSP with Irace
 .. code-block:: python
 
     """Test up AC implementation."""
-    import unified_planning as up
     import up_ac
     import os
     import sys
 
-    # make sure test can be run from anywhere
-    path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
-    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
-
     from up_ac.Irace_configurator import IraceConfigurator
     from up_ac.Irace_interface import IraceInterface
+
+    # Get example PPDL files from up_ac
+    path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
 
     # You can also provide a list of tuples (instance, domain) if some domains are
     # located in different places
@@ -221,23 +227,22 @@ Anytime tuning LPG with Selector
 .. code-block:: python
 
     """Test up AC implementation."""
-    import unified_planning as up
+    import up_ac
     import os
     import sys
 
     from up_ac.Selector_configurator import SelectorConfigurator
     from up_ac.Selector_interface import SelectorInterface
-    import up_ac
 
-    path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py')
+    # Get example PPDL files from up_ac
+    path = '/' + os.path.abspath(up_ac.__file__).strip('/__init__.py'
+    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
 
     # You can also provide a list of tuples (instance, domain) if some domains are
     # located in different places
     train_instances = [f'{path}/test_problems/visit_precedence/problem.pddl',
                        f'{path}/test_problems/counters/problem.pddl',
                        f'{path}/test_problems/depot/problem.pddl']
-
-    sys.path.insert(0, sys.path[0].rsplit('up-ac', 1)[0] + '/up-ac')
 
     # Mock test instance set for this example
     test_instances = train_instances

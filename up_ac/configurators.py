@@ -57,40 +57,6 @@ class Configurator():
         self.ac = None
         self.verbose = True
 
-        # Control for integrated planner versions
-        '''
-        try:
-            import up_enhsp
-            cai('up-enhsp', '0.0.25')
-        except (ImportError, ModuleNotFoundError):
-            pass
-        try:
-            import up_fast_downward
-            cai('up-fast-downward', '0.4.1')
-        except (ImportError, ModuleNotFoundError):
-            pass
-        try:
-            import up_lpg
-            cai('up-lpg', '0.0.11')
-        except (ImportError, ModuleNotFoundError):
-            pass
-        try:
-            import up_pyperplan
-            cai('up-pyperplan', '1.1.0')
-        except (ImportError, ModuleNotFoundError):
-            pass
-        try:
-            import up_symk
-            cai('up-symk', '1.3.1')
-        except (ImportError, ModuleNotFoundError):
-            pass
-        try:
-            import up_tamer
-            cai('up-tamer', '1.1.3')
-        except (ImportError, ModuleNotFoundError):
-            pass
-        '''
-
     def print_feedback(self, engine, instance, feedback):
         """
         Print feedback from the engine.

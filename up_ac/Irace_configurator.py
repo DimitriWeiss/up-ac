@@ -237,6 +237,8 @@ class IraceConfigurator(Configurator):
         :type instance_features: dict, optional
         :param metric: Optimization metric, either 'runtime' or 'quality' (optional).
         :type metric: str, optional
+        :param patience: Extra time in seconds to grant engine to terminate gracefully.
+        :type patience: int
 
         :raises ValueError: If the provided metric is not supported.
         """

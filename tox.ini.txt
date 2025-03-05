@@ -1,0 +1,12 @@
+[tox]
+envlist = docs  # Defines an environment named "docs"
+
+[testenv:docs]
+description = Build Sphinx documentation like Read the Docs
+deps =
+    sphinx
+    sphinx-rtd-theme
+    -r rtd_requirements.txt  # Use the same requirements file as RTD
+commands =
+    sphinx-build -W --keep-going -b html . _build/html
+

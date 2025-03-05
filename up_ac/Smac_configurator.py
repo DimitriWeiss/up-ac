@@ -231,6 +231,8 @@ class SmacConfigurator(Configurator):
         :param list instances: List of problem instance paths (default is empty list, uses train_set).
         :param dict instance_features: Dictionary containing instance names and lists of features (default is None).
         :param str metric: The optimization metric, either 'runtime' or 'quality' (default is 'runtime').
+        :param patience: Extra time in seconds to grant engine to terminate gracefully.
+        :type patience: int
 
         :raises ValueError: If an unsupported metric is provided.
         """

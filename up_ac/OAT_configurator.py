@@ -189,36 +189,7 @@ class OATConfigurator(Configurator):
                         timelimit = self.planner_timelimit - self.patience
                     else:
                         timelimit = self.planner_timelimit
-                    '''
-                    feedback = \
-                        gaci.run_engine_config(config,
-                                               metric,
-                                               engine,
-                                               mode,
-                                               pddl_problem)
-                                               
-                    try:
-                        @concurrent.process(timeout=self.scenario['timelimit'])
-                        def solve(config, metric, engine,
-                                  mode, pddl_problem):
-                            feedback = \
-                                gaci.run_engine_config(config,
-                                                       metric, engine,
-                                                       mode, pddl_problem)
 
-                            return feedback
-
-                        feedback = solve(config, metric, engine,
-                                         mode, pddl_problem)
-                    
-                        try:
-                            feedback = feedback.result()
-                        except TimeoutError:
-                            if metric == 'runtime':
-                                feedback = self.planner_timelimit
-                            elif metric == 'quality':
-                                feedback = self.crash_cost
-                    '''
                     try:
 
                         if ',' in instance_p:
@@ -322,6 +293,8 @@ class OATConfigurator(Configurator):
         :param str metric: Optimization metric.
         :param int popSize: Population size of configs per generation (OAT).
         :param int evalLimit: Maximum number of evaluations (OAT).
+        :param patience: Extra time in seconds to grant engine to terminate gracefully.
+        :type patience: int
         """
         self.crash_cost = crash_cost
         self.patience = patience
